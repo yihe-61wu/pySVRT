@@ -39,12 +39,10 @@ from _ext import svrt
 labels = torch.LongTensor(12).zero_()
 labels.narrow(0, 0, labels.size(0)//2).fill_(1)
 
-train_set = svrt.generate_vignettes(4, labels)
+x = svrt.generate_vignettes(4, labels)
 
-print(str(type(train_set)), train_set.size())
+x = x.view(x.size(0), 1, x.size(1), x.size(2))
 
-train_set = train_set.view(train_set.size(0), 1, train_set.size(1), train_set.size(2))
+x.div_(255)
 
-train_set.div_(255)
-
-torchvision.utils.save_image(train_set, 'example.png')
+torchvision.utils.save_image(x, 'example.png')
