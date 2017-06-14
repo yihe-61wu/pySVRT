@@ -26,10 +26,13 @@ else
  CXXFLAGS = -fPIC -Wall -g -O3
 endif
 
-all: libsvrt.so TAGS
+all: svrt TAGS
 
 TAGS: *.cc *.h
 	etags *.cc *.h
+
+svrt:	libsvrt.so
+	./build.py
 
 libsvrt.so: \
 	misc.o random.o \
@@ -42,6 +45,6 @@ Makefile.depend: *.h *.cc Makefile
 	$(CC) $(CXXFLAGS) -M *.cc > Makefile.depend
 
 clean:
-	\rm -f svrt *.o *.so Makefile.depend
+	\rm -rf svrt *.o *.so Makefile.depend
 
 -include Makefile.depend
