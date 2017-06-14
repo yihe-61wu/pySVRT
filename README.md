@@ -31,3 +31,7 @@ make -j -k
 ```
 
 should generate an image example.png in the current directory.
+
+Note that the image generation does not take advantage of GPUs or
+multi-core, and can be as slow as 40 vignettes per second s on a 4GHz
+i7-6700K.
