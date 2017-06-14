@@ -6,7 +6,7 @@ framework.
 The main function is
 
 ```
-torch.ByteTensor generate_vignettes(int problem_number, torch.LongTensor labels)
+torch.ByteTensor svrt.generate_vignettes(int problem_number, torch.LongTensor labels)
 ```
 
 where
