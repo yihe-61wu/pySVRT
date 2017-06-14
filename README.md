@@ -26,7 +26,7 @@ Executing
 
 ```
 make -j -k
-./built.py
+./build.py
 ./test-svrt.py
 ```
 
