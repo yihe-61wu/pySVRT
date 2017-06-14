@@ -174,7 +174,7 @@ void svrt_generate_vignettes(int n_problem, int nb_vignettes, long *labels,
     if(labels[i] == 0 || labels[i] == 1) {
       vg->generate(labels[i], &tmp);
     } else {
-      printf("Vignette class label has to be 0 or 1. Provided value is %d.\n", labels[i]);
+      printf("Vignette class label has to be 0 or 1. Provided value is %ld.\n", labels[i]);
       exit(1);
     }
 
