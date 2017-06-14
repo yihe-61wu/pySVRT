@@ -35,6 +35,11 @@ THByteTensor *generate_vignettes(long n_problem, THLongTensor *labels) {
   long *m, *l;
   unsigned char *a, *b;
 
+  if(THLongTensor_nDimension(labels) != 1) {
+    printf("Label tensor has to be of dimension 1.\n");
+    exit(1);
+  }
+
   nb_vignettes = THLongTensor_size(labels, 0);
   m = THLongTensor_storage(labels)->data + THLongTensor_storageOffset(labels);
   st0 = THLongTensor_stride(labels, 0);

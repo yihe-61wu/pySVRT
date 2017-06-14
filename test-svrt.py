@@ -46,3 +46,5 @@ x = x.view(x.size(0), 1, x.size(1), x.size(2))
 x.div_(255)
 
 torchvision.utils.save_image(x, 'example.png')
+
+print('Wrote example.png')
