@@ -27,7 +27,7 @@ from torch.utils.ffi import create_extension
 abs_path = os.path.dirname(os.path.abspath(__file__))
 
 ffi = create_extension(
-    '_ext.svrt',
+    'svrt',
     headers = [ 'svrt.h' ],
     sources = [ 'svrt.c' ],
     extra_objects = [ abs_path + '/libsvrt.so' ],

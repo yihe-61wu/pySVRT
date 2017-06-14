@@ -34,7 +34,7 @@ from torch.nn import functional as fn
 
 from torchvision import datasets, transforms, utils
 
-from _ext import svrt
+import svrt
 
 labels = torch.LongTensor(12).zero_()
 labels.narrow(0, 0, labels.size(0)//2).fill_(1)
