@@ -23,4 +23,4 @@
  *
  */
 
-THByteTensor *generate_vignettes(long n_problem, long nb_images);
+THByteTensor *generate_vignettes(long n_problem, THLongTensor *labels);

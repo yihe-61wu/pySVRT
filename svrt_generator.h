@@ -35,7 +35,8 @@ struct VignetteSet {
   unsigned char *data;
 };
 
-void svrt_generate_vignettes(int n_problem, int nb_vignettes, struct VignetteSet *result);
+  void svrt_generate_vignettes(int n_problem, int nb_vignettes, long *labels,
+                               struct VignetteSet *result);
 
 #ifdef __cplusplus
 }
