@@ -22,8 +22,12 @@ The returned ByteTensor has three dimensions:
 
 # Installation and test #
 
+Executing
+
 ```
 make -j -k
 ./built.py
 ./test-svrt.py
 ```
+
+should generate an image example.png in the current directory.
