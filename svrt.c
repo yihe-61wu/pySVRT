@@ -29,21 +29,37 @@
 
 THByteTensor *generate_vignettes(long n_problem, long nb_vignettes) {
   struct VignetteSet vs;
+  long st0, st1, st2;
+  long v, i, j;
+  unsigned char *a, *b;
 
   svrt_generate_vignettes(n_problem, nb_vignettes, &vs);
   printf("SANITY %d %d %d\n", vs.nb_vignettes, vs.width, vs.height);
 
   THLongStorage *size = THLongStorage_newWithSize(3);
-  size->data[0] = nb_vignettes;
+  size->data[0] = vs.nb_vignettes;
   size->data[1] = vs.height;
   size->data[2] = vs.width;
 
   THByteTensor *result = THByteTensor_newWithSize(size, NULL);
   THLongStorage_free(size);
 
-  /* st0 = THByteTensor_stride(result, 0); */
-  /* st1 = THByteTensor_stride(result, 1); */
-  /* st2 = THByteTensor_stride(result, 2); */
+  st0 = THByteTensor_stride(result, 0);
+  st1 = THByteTensor_stride(result, 1);
+  st2 = THByteTensor_stride(result, 2);
+
+  unsigned char *r = vs.data;
+  for(v = 0; v < vs.nb_vignettes; v++) {
+    a = THByteTensor_storage(result)->data + THByteTensor_storageOffset(result) + v * st0;
+    for(i = 0; i < vs.height; i++) {
+      b = a + i * st1;
+      for(j = 0; j < vs.width; j++) {
+        *b = (unsigned char) (*r);
+        r++;
+        b += st2;
+      }
+    }
+  }
 
   return result;
 }

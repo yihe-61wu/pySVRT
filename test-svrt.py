@@ -24,16 +24,22 @@
 import time
 
 import torch
+import torchvision
 
 from torch import optim
 from torch import FloatTensor as Tensor
 from torch.autograd import Variable
 from torch import nn
 from torch.nn import functional as fn
+
 from torchvision import datasets, transforms, utils
 
 from _ext import svrt
 
-train_set = svrt.generate_vignettes(12, 1234)
+train_set = svrt.generate_vignettes(12, 64)
 
 print(str(type(train_set)), train_set.size())
+
+train_set.div_(255)
+
+torchvision.utils.save_image(train_set.view(train_set.size(0), 1, train_set.size(1), train_set.size(2)), 'example.png')

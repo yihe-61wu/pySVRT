@@ -145,22 +145,34 @@ VignetteGenerator *new_generator(int nb) {
 
 extern "C" {
 
-  struct VignetteSet {
-    int n_problem;
-    int nb_vignettes;
-    int width;
-    int height;
-    unsigned char *data;
-  };
+struct VignetteSet {
+  int n_problem;
+  int nb_vignettes;
+  int width;
+  int height;
+  unsigned char *data;
+};
 
-  void svrt_generate_vignettes(int n_problem, int nb_vignettes, VignetteSet *result) {
-    VignetteGenerator *vg = new_generator(n_problem);
-    result->n_problem = n_problem;
-    result->nb_vignettes = nb_vignettes;
-    result->width = Vignette::width;
-    result->height = Vignette::height;
-    result->data = (unsigned char *) malloc(sizeof(unsigned char) * result->nb_vignettes * result->width * result->height);
-    delete vg;
+void svrt_generate_vignettes(int n_problem, int nb_vignettes, VignetteSet *result) {
+  Vignette tmp;
+
+  VignetteGenerator *vg = new_generator(n_problem);
+  result->n_problem = n_problem;
+  result->nb_vignettes = nb_vignettes;
+  result->width = Vignette::width;
+  result->height = Vignette::height;
+  result->data = (unsigned char *) malloc(sizeof(unsigned char) * result->nb_vignettes * result->width * result->height);
+
+  unsigned char *s = result->data;
+  for(int i = 0; i < nb_vignettes; i++) {
+    vg->generate(drand48() < 0.5 ? 1 : 0, &tmp);
+    int *r = tmp.content;
+    for(int k = 0; k < Vignette::width * Vignette::height; k++) {
+      *s++ = *r++;
+    }
   }
+
+  delete vg;
+}
 
 }
