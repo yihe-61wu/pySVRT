@@ -41,6 +41,8 @@ labels.narrow(0, 0, labels.size(0)//2).fill_(1)
 
 x = svrt.generate_vignettes(4, labels)
 
+print('compression factor {:f}'.format(x.storage().size() / svrt.compress(x.storage()).size()))
+
 x = x.view(x.size(0), 1, x.size(1), x.size(2))
 
 x.div_(255)

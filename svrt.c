@@ -27,6 +27,65 @@
 
 #include "svrt_generator.h"
 
+THByteStorage *compress(THByteStorage *x) {
+  long k, g, n;
+
+  k = 0; n = 0;
+  while(k < x->size) {
+    g = 0;
+    while(k < x->size && x->data[k] == 255 && g < 255) { g++; k++; }
+    n++;
+    if(k < x->size && g < 255) { k++; }
+  }
+
+  if(x->data[k-1] == 0) {
+    n++;
+  }
+
+  THByteStorage *result = THByteStorage_newWithSize(n);
+
+  k = 0; n = 0;
+  while(k < x->size) {
+    g = 0;
+    while(k < x->size && x->data[k] == 255 && g < 255) { g++; k++; }
+    result->data[n++] = g;
+    if(k < x->size && g < 255) { k++; }
+  }
+  if(x->data[k-1] == 0) {
+    result->data[n++] = 0;
+  }
+
+  return result;
+}
+
+THByteStorage *uncompress(THByteStorage *x) {
+  long k, g, n;
+
+  k = 0;
+  for(n = 0; n < x->size - 1; n++) {
+    k = k + x->data[n];
+    if(x->data[n] < 255) { k++; }
+  }
+  k = k + x->data[n];
+
+  THByteStorage *result = THByteStorage_newWithSize(k);
+
+  k = 0;
+  for(n = 0; n < x->size - 1; n++) {
+    for(g = 0; g < x->data[n]; g++) {
+      result->data[k++] = 255;
+    }
+    if(x->data[n] < 255) {
+      result->data[k++] = 0;
+    }
+  }
+  for(g = 0; g < x->data[n]; g++) {
+    result->data[k++] = 255;
+  }
+
+  return result;
+}
+
 THByteTensor *generate_vignettes(long n_problem, THLongTensor *labels) {
   struct VignetteSet vs;
   long nb_vignettes;

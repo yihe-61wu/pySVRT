@@ -23,4 +23,8 @@
  *
  */
 
+THByteStorage *compress(THByteStorage *x);
+
+THByteStorage *uncompress(THByteStorage *x);
+
 THByteTensor *generate_vignettes(long n_problem, THLongTensor *labels);
