@@ -21,10 +21,10 @@
 #  You should have received a copy of the GNU General Public License
 #  along with selector.  If not, see <http://www.gnu.org/licenses/>.
 
-import os
+from os import path
 from torch.utils.ffi import create_extension
 
-abs_path = os.path.dirname(os.path.abspath(__file__))
+abs_path = path.dirname(path.abspath(__file__))
 
 ffi = create_extension(
     'svrt',
@@ -37,5 +37,4 @@ ffi = create_extension(
     with_cuda = False
 )
 
-if __name__ == '__main__':
-    ffi.build()
+ffi.build()
