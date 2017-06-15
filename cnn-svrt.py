@@ -53,7 +53,7 @@ parser.add_argument('--nb_test_samples',
                     help = 'How many samples for test')
 
 parser.add_argument('--nb_epochs',
-                    type = int, default = 100,
+                    type = int, default = 50,
                     help = 'How many training epochs')
 
 parser.add_argument('--log_file',
