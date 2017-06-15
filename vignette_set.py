@@ -84,7 +84,7 @@ class CompressedVignetteSet:
             self.input_storages.append(svrt.compress(input.storage()))
 
         self.mean = acc / self.nb_batches
-        self.std = math.sqrt(acc_sq / self.nb_batches - self.mean * self.mean)
+        self.std = sqrt(acc_sq / self.nb_batches - self.mean * self.mean)
 
     def get_batch(self, b):
         input = torch.ByteTensor(svrt.uncompress(self.input_storages[b])).float()
