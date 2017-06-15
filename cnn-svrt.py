@@ -22,6 +22,7 @@
 #  along with selector.  If not, see <http://www.gnu.org/licenses/>.
 
 import time
+import argparse
 
 import torch
 
@@ -33,6 +34,37 @@ from torch.nn import functional as fn
 from torchvision import datasets, transforms, utils
 
 import svrt
+
+######################################################################
+
+parser = argparse.ArgumentParser(
+    description = 'Simple convnet test on the SVRT.',
+    formatter_class = argparse.ArgumentDefaultsHelpFormatter
+)
+
+parser.add_argument('--nb_train_samples',
+                    type = int, default = 100000,
+                    help = 'How many samples for train')
+
+parser.add_argument('--nb_test_samples',
+                    type = int, default = 10000,
+                    help = 'How many samples for test')
+
+parser.add_argument('--nb_epochs',
+                    type = int, default = 25,
+                    help = 'How many training epochs')
+
+args = parser.parse_args()
+
+######################################################################
+
+log_file = open('cnn-svrt.log', 'w')
+
+def log_string(s):
+    s = time.ctime() + ' ' + str(problem_number) + ' | ' + s
+    log_file.write(s + '\n')
+    log_file.flush()
+    print(s)
 
 ######################################################################
 
@@ -69,50 +101,41 @@ def train_model(train_input, train_target):
         model.cuda()
         criterion.cuda()
 
-    nb_epochs = 25
     optimizer, bs = optim.SGD(model.parameters(), lr = 1e-1), 100
 
-    for k in range(0, nb_epochs):
-        for b in range(0, nb_train_samples, bs):
+    for k in range(0, args.nb_epochs):
+        acc_loss = 0.0
+        for b in range(0, train_input.size(0), bs):
             output = model.forward(train_input.narrow(0, b, bs))
             loss = criterion(output, train_target.narrow(0, b, bs))
+            acc_loss = acc_loss + loss.data[0]
             model.zero_grad()
             loss.backward()
             optimizer.step()
+        log_string('TRAIN_LOSS {:d} {:f}'.format(k, acc_loss))
 
     return model
 
 ######################################################################
 
-def print_test_error(model, test_input, test_target):
-    bs = 100
-    nb_test_errors = 0
+def nb_errors(model, data_input, data_target, bs = 100):
+    ne = 0
 
-    for b in range(0, nb_test_samples, bs):
-        output = model.forward(test_input.narrow(0, b, bs))
+    for b in range(0, data_input.size(0), bs):
+        output = model.forward(data_input.narrow(0, b, bs))
         wta_prediction = output.data.max(1)[1].view(-1)
 
         for i in range(0, bs):
-            if wta_prediction[i] != test_target.narrow(0, b, bs).data[i]:
-                nb_test_errors = nb_test_errors + 1
+            if wta_prediction[i] != data_target.narrow(0, b, bs).data[i]:
+                ne = ne + 1
 
-    print('TEST_ERROR {:.02f}% ({:d}/{:d})'.format(
-        100 * nb_test_errors / nb_test_samples,
-        nb_test_errors,
-        nb_test_samples)
-    )
+    return ne
 
 ######################################################################
 
-nb_train_samples = 100000
-nb_test_samples = 10000
-
-for p in range(1, 24):
-    print('-- PROBLEM #{:d} --'.format(p))
-
-    t1 = time.time()
-    train_input, train_target = generate_set(p, nb_train_samples)
-    test_input, test_target = generate_set(p, nb_test_samples)
+for problem_number in range(1, 24):
+    train_input, train_target = generate_set(problem_number, args.nb_train_samples)
+    test_input, test_target = generate_set(problem_number, args.nb_test_samples)
 
     if torch.cuda.is_available():
         train_input, train_target = train_input.cuda(), train_target.cuda()
@@ -122,17 +145,14 @@ for p in range(1, 24):
     train_input.data.sub_(mu).div_(std)
     test_input.data.sub_(mu).div_(std)
 
-    t2 = time.time()
-    print('[data generation {:.02f}s]'.format(t2 - t1))
     model = train_model(train_input, train_target)
 
-    t3 = time.time()
-    print('[train {:.02f}s]'.format(t3 - t2))
-    print_test_error(model, test_input, test_target)
+    nb_test_errors = nb_errors(model, test_input, test_target)
 
-    t4 = time.time()
-
-    print('[test {:.02f}s]'.format(t4 - t3))
-    print()
+    log_string('TEST_ERROR {:.02f}% ({:d}/{:d})'.format(
+        100 * nb_test_errors / test_input.size(0),
+        nb_test_errors,
+        test_input.size(0))
+    )
 
 ######################################################################
