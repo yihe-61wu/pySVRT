@@ -20,6 +20,28 @@ The returned ByteTensor has three dimensions:
  * Pixel row
  * Pixel col
 
+Two functions additional functions
+
+```
+torch.ByteStorage svrt.compress(torch.ByteStorage x)
+```
+
+and
+
+```
+torch.ByteStorage svrt.uncompress(torch.ByteStorage x)
+```
+
+provides a lossless compression scheme adapted to the ByteStorage of
+the vignette ByteTensor (i.e. expecting a lot of 255s, a few 0s, and
+no other value).
+
+They allow to reduce the memory footprint by a factor ~50, and may be
+usefull to deal with very large data-sets and avoid re-generating
+images at every batch.
+
+See vignette_set.py for a class CompressedVignetteSet using it.
+
 # Installation and test #
 
 Executing
