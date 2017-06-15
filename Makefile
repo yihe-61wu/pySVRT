@@ -31,7 +31,7 @@ all: svrt TAGS
 TAGS: *.cc *.h
 	etags *.cc *.h
 
-svrt:	libsvrt.so
+svrt:	libsvrt.so svrt.h svrt.c
 	./build.py
 
 libsvrt.so: \
