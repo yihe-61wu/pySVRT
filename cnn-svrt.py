@@ -65,7 +65,7 @@ args = parser.parse_args()
 
 log_file = open(args.log_file, 'w')
 
-print('Logging into ' + args.log_file)
+print(Fore.RED + 'Logging into ' + args.log_file + Style.RESET_ALL)
 
 def log_string(s):
     s = Fore.GREEN + time.ctime() + Style.RESET_ALL + ' ' + \
@@ -112,7 +112,7 @@ def train_model(train_input, train_target):
         model.cuda()
         criterion.cuda()
 
-    optimizer, bs = optim.SGD(model.parameters(), lr = 1e-2), 100
+    optimizer, bs = optim.Adam(model.parameters(), lr = 1e-1), 100
 
     for k in range(0, args.nb_epochs):
         acc_loss = 0.0
