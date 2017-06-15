@@ -23,6 +23,7 @@
 
 import time
 import argparse
+import math
 
 from colorama import Fore, Back, Style
 
@@ -64,6 +65,10 @@ parser.add_argument('--log_file',
                     type = str, default = 'cnn-svrt.log',
                     help = 'Log file name')
 
+parser.add_argument('--compress_vignettes',
+                    action='store_true', default = False,
+                    help = 'Should we use lossless compression of vignette to reduce the memory footprint')
+
 args = parser.parse_args()
 
 ######################################################################
@@ -80,14 +85,70 @@ def log_string(s):
 
 ######################################################################
 
-def generate_set(p, n):
-    target = torch.LongTensor(n).bernoulli_(0.5)
-    t = time.time()
-    input = svrt.generate_vignettes(p, target)
-    t = time.time() - t
-    log_string('data_set_generation {:.02f} sample/s'.format(n / t))
-    input = input.view(input.size(0), 1, input.size(1), input.size(2)).float()
-    return Variable(input), Variable(target)
+class VignetteSet:
+    def __init__(self, problem_number, nb_batches):
+        self.batch_size = args.batch_size
+        self.problem_number = problem_number
+        self.nb_batches = nb_batches
+        self.nb_samples = self.nb_batches * self.batch_size
+        self.targets = []
+        self.inputs = []
+
+        acc = 0.0
+        acc_sq = 0.0
+
+        for k in range(0, self.nb_batches):
+            target = torch.LongTensor(self.batch_size).bernoulli_(0.5)
+            input = svrt.generate_vignettes(problem_number, target)
+            input = input.float().view(input.size(0), 1, input.size(1), input.size(2))
+            if torch.cuda.is_available():
+                input = input.cuda()
+                target = target.cuda()
+            acc += input.float().sum() / input.numel()
+            acc_sq += input.float().pow(2).sum() /  input.numel()
+            self.targets.append(target)
+            self.inputs.append(input)
+
+        mean = acc / self.nb_batches
+        std = math.sqrt(acc_sq / self.nb_batches - mean * mean)
+        for k in range(0, self.nb_batches):
+            self.inputs[k].sub_(mean).div_(std)
+
+    def get_batch(self, b):
+        return self.inputs[b], self.targets[b]
+
+class CompressedVignetteSet:
+    def __init__(self, problem_number, nb_batches):
+        self.batch_size = args.batch_size
+        self.problem_number = problem_number
+        self.nb_batches = nb_batches
+        self.nb_samples = self.nb_batches * self.batch_size
+        self.targets = []
+        self.input_storages = []
+
+        acc = 0.0
+        acc_sq = 0.0
+        for k in range(0, self.nb_batches):
+            target = torch.LongTensor(self.batch_size).bernoulli_(0.5)
+            input = svrt.generate_vignettes(problem_number, target)
+            acc += input.float().sum() / input.numel()
+            acc_sq += input.float().pow(2).sum() /  input.numel()
+            self.targets.append(target)
+            self.input_storages.append(svrt.compress(input.storage()))
+
+        self.mean = acc / self.nb_batches
+        self.std = math.sqrt(acc_sq / self.nb_batches - self.mean * self.mean)
+
+    def get_batch(self, b):
+        input = torch.ByteTensor(svrt.uncompress(self.input_storages[b])).float()
+        input = input.view(self.batch_size, 1, 128, 128).sub_(self.mean).div_(self.std)
+        target = self.targets[b]
+
+        if torch.cuda.is_available():
+            input = input.cuda()
+            target = target.cuda()
+
+        return input, target
 
 ######################################################################
 
@@ -123,8 +184,8 @@ class AfrozeShallowNet(nn.Module):
         x = self.fc2(x)
         return x
 
-def train_model(model, train_input, train_target):
-    bs = args.batch_size
+def train_model(model, train_set):
+    batch_size = args.batch_size
     criterion = nn.CrossEntropyLoss()
 
     if torch.cuda.is_available():
@@ -134,9 +195,10 @@ def train_model(model, train_input, train_target):
 
     for k in range(0, args.nb_epochs):
         acc_loss = 0.0
-        for b in range(0, train_input.size(0), bs):
-            output = model.forward(train_input.narrow(0, b, bs))
-            loss = criterion(output, train_target.narrow(0, b, bs))
+        for b in range(0, train_set.nb_batches):
+            input, target = train_set.get_batch(b)
+            output = model.forward(Variable(input))
+            loss = criterion(output, Variable(target))
             acc_loss = acc_loss + loss.data[0]
             model.zero_grad()
             loss.backward()
@@ -147,16 +209,15 @@ def train_model(model, train_input, train_target):
 
 ######################################################################
 
-def nb_errors(model, data_input, data_target):
-    bs = args.batch_size
-
+def nb_errors(model, data_set):
     ne = 0
-    for b in range(0, data_input.size(0), bs):
-        output = model.forward(data_input.narrow(0, b, bs))
+    for b in range(0, data_set.nb_batches):
+        input, target = data_set.get_batch(b)
+        output = model.forward(Variable(input))
         wta_prediction = output.data.max(1)[1].view(-1)
 
-        for i in range(0, bs):
-            if wta_prediction[i] != data_target.narrow(0, b, bs).data[i]:
+        for i in range(0, data_set.batch_size):
+            if wta_prediction[i] != target[i]:
                 ne = ne + 1
 
     return ne
@@ -167,20 +228,17 @@ for arg in vars(args):
     log_string('argument ' + str(arg) + ' ' + str(getattr(args, arg)))
 
 for problem_number in range(1, 24):
-    train_input, train_target = generate_set(problem_number,
-                                             args.nb_train_batches * args.batch_size)
-    test_input, test_target = generate_set(problem_number,
-                                           args.nb_test_batches * args.batch_size)
+    if args.compress_vignettes:
+        train_set = CompressedVignetteSet(problem_number, args.nb_train_batches)
+        test_set = CompressedVignetteSet(problem_number, args.nb_test_batches)
+    else:
+        train_set = VignetteSet(problem_number, args.nb_train_batches)
+        test_set = VignetteSet(problem_number, args.nb_test_batches)
+
     model = AfrozeShallowNet()
 
     if torch.cuda.is_available():
-        train_input, train_target = train_input.cuda(), train_target.cuda()
-        test_input, test_target = test_input.cuda(), test_target.cuda()
         model.cuda()
-
-    mu, std = train_input.data.mean(), train_input.data.std()
-    train_input.data.sub_(mu).div_(std)
-    test_input.data.sub_(mu).div_(std)
 
     nb_parameters = 0
     for p in model.parameters():
@@ -194,26 +252,26 @@ for problem_number in range(1, 24):
         log_string('loaded_model ' + model_filename)
     except:
         log_string('training_model')
-        train_model(model, train_input, train_target)
+        train_model(model, train_set)
         torch.save(model.state_dict(), model_filename)
         log_string('saved_model ' + model_filename)
 
-    nb_train_errors = nb_errors(model, train_input, train_target)
+    nb_train_errors = nb_errors(model, train_set)
 
     log_string('train_error {:d} {:.02f}% {:d} {:d}'.format(
         problem_number,
-        100 * nb_train_errors / train_input.size(0),
+        100 * nb_train_errors / train_set.nb_samples,
         nb_train_errors,
-        train_input.size(0))
+        train_set.nb_samples)
     )
 
-    nb_test_errors = nb_errors(model, test_input, test_target)
+    nb_test_errors = nb_errors(model, test_set)
 
     log_string('test_error {:d} {:.02f}% {:d} {:d}'.format(
         problem_number,
-        100 * nb_test_errors / test_input.size(0),
+        100 * nb_test_errors / test_set.nb_samples,
         nb_test_errors,
-        test_input.size(0))
+        test_set.nb_samples)
     )
 
 ######################################################################
