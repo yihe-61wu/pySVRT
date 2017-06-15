@@ -31,9 +31,6 @@ ffi = create_extension(
     headers = [ 'svrt.h' ],
     sources = [ 'svrt.c' ],
     extra_objects = [ abs_path + '/libsvrt.so' ],
-    libraries = [ ],
-    library_dirs = [ ],
-    define_macros = [ ],
     with_cuda = False
 )
 
