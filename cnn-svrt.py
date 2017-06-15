@@ -144,9 +144,7 @@ def nb_errors(model, data_input, data_target, bs = 100):
 
 ######################################################################
 
-# for problem_number in range(1, 24):
-
-for problem_number in [ 3 ]:
+for problem_number in range(1, 24):
     train_input, train_target = generate_set(problem_number, args.nb_train_samples)
     test_input, test_target = generate_set(problem_number, args.nb_test_samples)
 
