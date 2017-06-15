@@ -87,20 +87,34 @@ def generate_set(p, n):
 
 ######################################################################
 
-# 128x128 --conv(9)-> 120x120 --max(4)-> 30x30 --conv(6)-> 25x25 --max(5)-> 5x5
+# Afroze's ShallowNet
+
+#                    map size   nb. maps
+#                  ----------------------
+#                    128x128    1
+# -- conv(21x21)  -> 108x108    6
+# -- max(2x2)     -> 54x54      6
+# -- conv(19x19)  -> 36x36      16
+# -- max(2x2)     -> 18x18      16
+# -- conv(18x18)  -> 1x1        120
+# -- reshape      -> 120        1
+# -- full(120x84) -> 84         1
+# -- full(84x2)   -> 2          1
 
 class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
-        self.conv1 = nn.Conv2d(1, 10, kernel_size=9)
-        self.conv2 = nn.Conv2d(10, 20, kernel_size=6)
-        self.fc1 = nn.Linear(500, 100)
-        self.fc2 = nn.Linear(100, 2)
+        self.conv1 = nn.Conv2d(1, 6, kernel_size=21)
+        self.conv2 = nn.Conv2d(6, 16, kernel_size=19)
+        self.conv3 = nn.Conv2d(16, 120, kernel_size=18)
+        self.fc1 = nn.Linear(120, 84)
+        self.fc2 = nn.Linear(84, 2)
 
     def forward(self, x):
-        x = fn.relu(fn.max_pool2d(self.conv1(x), kernel_size=4, stride=4))
-        x = fn.relu(fn.max_pool2d(self.conv2(x), kernel_size=5, stride=5))
-        x = x.view(-1, 500)
+        x = fn.relu(fn.max_pool2d(self.conv1(x), kernel_size=2))
+        x = fn.relu(fn.max_pool2d(self.conv2(x), kernel_size=2))
+        x = fn.relu(self.conv3(x))
+        x = x.view(-1, 120)
         x = fn.relu(self.fc1(x))
         x = self.fc2(x)
         return x
@@ -112,7 +126,7 @@ def train_model(train_input, train_target):
         model.cuda()
         criterion.cuda()
 
-    optimizer, bs = optim.Adam(model.parameters(), lr = 1e-1), 100
+    optimizer, bs = optim.SGD(model.parameters(), lr = 1e-2), 100
 
     for k in range(0, args.nb_epochs):
         acc_loss = 0.0
