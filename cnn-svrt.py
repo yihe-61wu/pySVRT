@@ -167,17 +167,13 @@ def nb_errors(model, data_set):
 for arg in vars(args):
     log_string('argument ' + str(arg) + ' ' + str(getattr(args, arg)))
 
+######################################################################
+
 for problem_number in range(1, 24):
-    if args.compress_vignettes:
-        train_set = CompressedVignetteSet(problem_number, args.nb_train_batches, args.batch_size,
-                                          cuda=torch.cuda.is_available())
-        test_set = CompressedVignetteSet(problem_number, args.nb_test_batches, args.batch_size,
-                                         cuda=torch.cuda.is_available())
-    else:
-        train_set = VignetteSet(problem_number, args.nb_train_batches, args.batch_size,
-                                          cuda=torch.cuda.is_available())
-        test_set = VignetteSet(problem_number, args.nb_test_batches, args.batch_size,
-                                          cuda=torch.cuda.is_available())
+
+    model_filename = model.name + '_' + \
+                     str(problem_number) + '_' + \
+                     str(args.nb_train_batches) + '.param'
 
     model = AfrozeShallowNet()
 
@@ -185,37 +181,53 @@ for problem_number in range(1, 24):
         model.cuda()
 
     nb_parameters = 0
-    for p in model.parameters():
-        nb_parameters += p.numel()
+    for p in model.parameters(): nb_parameters += p.numel()
     log_string('nb_parameters {:d}'.format(nb_parameters))
 
-    model_filename = model.name + '_' + str(problem_number) + '_' + str(train_set.nb_batches) + '.param'
-
     try:
+
         model.load_state_dict(torch.load(model_filename))
         log_string('loaded_model ' + model_filename)
+
     except:
-        log_string('training_model')
+
+        log_string('training_model ' + model_filename)
+
+        if args.compress_vignettes:
+            train_set = CompressedVignetteSet(problem_number,
+                                              args.nb_train_batches, args.batch_size,
+                                              cuda=torch.cuda.is_available())
+            test_set = CompressedVignetteSet(problem_number,
+                                             args.nb_test_batches, args.batch_size,
+                                             cuda=torch.cuda.is_available())
+        else:
+            train_set = VignetteSet(problem_number,
+                                    args.nb_train_batches, args.batch_size,
+                                    cuda=torch.cuda.is_available())
+            test_set = VignetteSet(problem_number,
+                                   args.nb_test_batches, args.batch_size,
+                                   cuda=torch.cuda.is_available())
+
         train_model(model, train_set)
         torch.save(model.state_dict(), model_filename)
         log_string('saved_model ' + model_filename)
 
-    nb_train_errors = nb_errors(model, train_set)
+        nb_train_errors = nb_errors(model, train_set)
 
-    log_string('train_error {:d} {:.02f}% {:d} {:d}'.format(
-        problem_number,
-        100 * nb_train_errors / train_set.nb_samples,
-        nb_train_errors,
-        train_set.nb_samples)
-    )
+        log_string('train_error {:d} {:.02f}% {:d} {:d}'.format(
+            problem_number,
+            100 * nb_train_errors / train_set.nb_samples,
+            nb_train_errors,
+            train_set.nb_samples)
+        )
 
-    nb_test_errors = nb_errors(model, test_set)
+        nb_test_errors = nb_errors(model, test_set)
 
-    log_string('test_error {:d} {:.02f}% {:d} {:d}'.format(
-        problem_number,
-        100 * nb_test_errors / test_set.nb_samples,
-        nb_test_errors,
-        test_set.nb_samples)
-    )
+        log_string('test_error {:d} {:.02f}% {:d} {:d}'.format(
+            problem_number,
+            100 * nb_test_errors / test_set.nb_samples,
+            nb_test_errors,
+            test_set.nb_samples)
+        )
 
 ######################################################################
