@@ -32,7 +32,7 @@ and
 torch.ByteStorage svrt.uncompress(torch.ByteStorage x)
 ```
 
-provides a lossless compression scheme adapted to the ByteStorage of
+provide a lossless compression scheme adapted to the ByteStorage of
 the vignette ByteTensor (i.e. expecting a lot of 255s, a few 0s, and
 no other value).
 
