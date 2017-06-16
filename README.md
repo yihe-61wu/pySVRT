@@ -20,7 +20,7 @@ The returned ByteTensor has three dimensions:
  * Pixel row
  * Pixel col
 
-Two functions additional functions
+The two additional functions
 
 ```
 torch.ByteStorage svrt.compress(torch.ByteStorage x)
