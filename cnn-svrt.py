@@ -146,6 +146,8 @@ def train_model(model, train_set):
 
     optimizer = optim.SGD(model.parameters(), lr = 1e-2)
 
+    start_t = time.time()
+
     for e in range(0, args.nb_epochs):
         acc_loss = 0.0
         for b in range(0, train_set.nb_batches):
@@ -157,6 +159,8 @@ def train_model(model, train_set):
             loss.backward()
             optimizer.step()
         log_string('train_loss {:d} {:f}'.format(e + 1, acc_loss))
+        dt = (time.time() - t) / (e + 1)
+        print(Fore.CYAN + 'ETA ' + time.ctime(time.time() + dt * (args.nb_epochs - e)) + Style.RESET_ALL)
 
     return model
 
