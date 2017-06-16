@@ -86,6 +86,10 @@ THByteStorage *uncompress(THByteStorage *x) {
   return result;
 }
 
+void seed(long s) {
+  srand48(s);
+}
+
 THByteTensor *generate_vignettes(long n_problem, THLongTensor *labels) {
   struct VignetteSet vs;
   long nb_vignettes;
