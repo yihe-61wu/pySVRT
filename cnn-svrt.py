@@ -180,6 +180,8 @@ for arg in vars(args):
 
 for problem_number in range(1, 24):
 
+    log_string('**** problem ' + str(problem_number) + ' ****')
+
     model = AfrozeShallowNet()
 
     if torch.cuda.is_available():
@@ -210,16 +212,10 @@ for problem_number in range(1, 24):
             train_set = CompressedVignetteSet(problem_number,
                                               args.nb_train_batches, args.batch_size,
                                               cuda=torch.cuda.is_available())
-            test_set = CompressedVignetteSet(problem_number,
-                                             args.nb_test_batches, args.batch_size,
-                                             cuda=torch.cuda.is_available())
         else:
             train_set = VignetteSet(problem_number,
                                     args.nb_train_batches, args.batch_size,
                                     cuda=torch.cuda.is_available())
-            test_set = VignetteSet(problem_number,
-                                   args.nb_test_batches, args.batch_size,
-                                   cuda=torch.cuda.is_available())
 
         log_string('data_generation {:0.2f} samples / s'.format(
             (train_set.nb_samples + test_set.nb_samples) / (time.time() - t))
@@ -238,13 +234,23 @@ for problem_number in range(1, 24):
             train_set.nb_samples)
         )
 
-        nb_test_errors = nb_errors(model, test_set)
+    if args.compress_vignettes:
+        test_set = CompressedVignetteSet(problem_number,
+                                         args.nb_test_batches, args.batch_size,
+                                         cuda=torch.cuda.is_available())
+    else:
+        test_set = VignetteSet(problem_number,
+                               args.nb_test_batches, args.batch_size,
+                               cuda=torch.cuda.is_available())
 
-        log_string('test_error {:d} {:.02f}% {:d} {:d}'.format(
-            problem_number,
-            100 * nb_test_errors / test_set.nb_samples,
-            nb_test_errors,
-            test_set.nb_samples)
-        )
+    nb_test_errors = nb_errors(model, test_set)
+
+    log_string('test_error {:d} {:.02f}% {:d} {:d}'.format(
+        problem_number,
+        100 * nb_test_errors / test_set.nb_samples,
+        nb_test_errors,
+        test_set.nb_samples)
+    )
+
 
 ######################################################################
