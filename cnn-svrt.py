@@ -73,6 +73,10 @@ parser.add_argument('--compress_vignettes',
                     action='store_true', default = False,
                     help = 'Use lossless compression to reduce the memory footprint')
 
+parser.add_argument('--test_loaded_models',
+                    action='store_true', default = False,
+                    help = 'Should we compute the test error of models we load')
+
 args = parser.parse_args()
 
 ######################################################################
@@ -217,9 +221,7 @@ for problem_number in range(1, 24):
                                     args.nb_train_batches, args.batch_size,
                                     cuda=torch.cuda.is_available())
 
-        log_string('data_generation {:0.2f} samples / s'.format(
-            (train_set.nb_samples + test_set.nb_samples) / (time.time() - t))
-        )
+        log_string('data_generation {:0.2f} samples / s'.format(train_set.nb_samples / (time.time() - t)))
 
         train_model(model, train_set)
         torch.save(model.state_dict(), model_filename)
@@ -234,23 +236,28 @@ for problem_number in range(1, 24):
             train_set.nb_samples)
         )
 
-    if args.compress_vignettes:
-        test_set = CompressedVignetteSet(problem_number,
-                                         args.nb_test_batches, args.batch_size,
-                                         cuda=torch.cuda.is_available())
-    else:
-        test_set = VignetteSet(problem_number,
-                               args.nb_test_batches, args.batch_size,
-                               cuda=torch.cuda.is_available())
+    if need_to_train or args.test_loaded_models:
 
-    nb_test_errors = nb_errors(model, test_set)
+        t = time.time()
 
-    log_string('test_error {:d} {:.02f}% {:d} {:d}'.format(
-        problem_number,
-        100 * nb_test_errors / test_set.nb_samples,
-        nb_test_errors,
-        test_set.nb_samples)
-    )
+        if args.compress_vignettes:
+            test_set = CompressedVignetteSet(problem_number,
+                                             args.nb_test_batches, args.batch_size,
+                                             cuda=torch.cuda.is_available())
+        else:
+            test_set = VignetteSet(problem_number,
+                                   args.nb_test_batches, args.batch_size,
+                                   cuda=torch.cuda.is_available())
 
+        log_string('data_generation {:0.2f} samples / s'.format(test_set.nb_samples / (time.time() - t)))
+
+        nb_test_errors = nb_errors(model, test_set)
+
+        log_string('test_error {:d} {:.02f}% {:d} {:d}'.format(
+            problem_number,
+            100 * nb_test_errors / test_set.nb_samples,
+            nb_test_errors,
+            test_set.nb_samples)
+        )
 
 ######################################################################
