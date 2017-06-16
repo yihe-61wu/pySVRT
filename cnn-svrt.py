@@ -171,14 +171,14 @@ for arg in vars(args):
 
 for problem_number in range(1, 24):
 
-    model_filename = model.name + '_' + \
-                     str(problem_number) + '_' + \
-                     str(args.nb_train_batches) + '.param'
-
     model = AfrozeShallowNet()
 
     if torch.cuda.is_available():
         model.cuda()
+
+    model_filename = model.name + '_' + \
+                     str(problem_number) + '_' + \
+                     str(args.nb_train_batches) + '.param'
 
     nb_parameters = 0
     for p in model.parameters(): nb_parameters += p.numel()
