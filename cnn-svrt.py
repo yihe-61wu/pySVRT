@@ -159,7 +159,7 @@ def train_model(model, train_set):
             loss.backward()
             optimizer.step()
         log_string('train_loss {:d} {:f}'.format(e + 1, acc_loss))
-        dt = (time.time() - t) / (e + 1)
+        dt = (time.time() - start_t) / (e + 1)
         print(Fore.CYAN + 'ETA ' + time.ctime(time.time() + dt * (args.nb_epochs - e)) + Style.RESET_ALL)
 
     return model
