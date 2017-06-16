@@ -22,7 +22,7 @@
 
 import torch
 from math import sqrt
-from torch.multiprocessing import Pool, cpu_count
+from torch import multiprocessing
 
 from torch import Tensor
 from torch.autograd import Variable
@@ -53,11 +53,14 @@ class VignetteSet:
         for b in range(0, self.nb_batches):
             mp_args.append( [ problem_number, batch_size, seeds[b] ])
 
-        # self.data = []
-        # for b in range(0, self.nb_batches):
-            # self.data.append(generate_one_batch(mp_args[b]))
+        self.data = []
+        for b in range(0, self.nb_batches):
+            self.data.append(generate_one_batch(mp_args[b]))
 
-        self.data = Pool(cpu_count()).map(generate_one_batch, mp_args)
+        # Weird thing going on with the multi-processing, waiting for more info
+
+        # pool = multiprocessing.Pool(multiprocessing.cpu_count())
+        # self.data = pool.map(generate_one_batch, mp_args)
 
         acc = 0.0
         acc_sq = 0.0
