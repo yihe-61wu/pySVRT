@@ -88,13 +88,16 @@ print(Fore.RED + 'Logging into ' + args.log_file + Style.RESET_ALL)
 
 def log_string(s):
     global pred_log_t
+
     t = time.time()
 
     if pred_log_t is None:
         elapsed = 'start'
     else:
         elapsed = '+{:.02f}s'.format(t - pred_log_t)
+
     pred_log_t = t
+
     s = Fore.BLUE + time.ctime() + ' ' + Fore.GREEN + elapsed + Style.RESET_ALL + ' ' + s
     log_file.write(s + '\n')
     log_file.flush()
