@@ -45,36 +45,31 @@ from vignette_set import VignetteSet, CompressedVignetteSet
 ######################################################################
 
 parser = argparse.ArgumentParser(
-    description = 'Simple convnet test on the SVRT.',
+    description = "Convolutional networks for the SVRT. Written by Francois Fleuret, (C) Idiap research institute.",
     formatter_class = argparse.ArgumentDefaultsHelpFormatter
 )
 
 parser.add_argument('--nb_train_samples',
-                    type = int, default = 100000,
-                    help = 'How many samples for train')
+                    type = int, default = 100000)
 
 parser.add_argument('--nb_test_samples',
-                    type = int, default = 10000,
-                    help = 'How many samples for test')
+                    type = int, default = 10000)
 
 parser.add_argument('--nb_epochs',
-                    type = int, default = 50,
-                    help = 'How many training epochs')
+                    type = int, default = 50)
 
 parser.add_argument('--batch_size',
-                    type = int, default = 100,
-                    help = 'Mini-batch size')
+                    type = int, default = 100)
 
 parser.add_argument('--log_file',
-                    type = str, default = 'default.log',
-                    help = 'Log file name')
+                    type = str, default = 'default.log')
 
 parser.add_argument('--compress_vignettes',
-                    action='store_true', default = False,
+                    action='store_true', default = True,
                     help = 'Use lossless compression to reduce the memory footprint')
 
 parser.add_argument('--deep_model',
-                    action='store_true', default = False,
+                    action='store_true', default = True,
                     help = 'Use Afroze\'s Alexnet-like deep model')
 
 parser.add_argument('--test_loaded_models',
@@ -104,10 +99,10 @@ def log_string(s, remark = ''):
 
     pred_log_t = t
 
-    s = Fore.BLUE + '[' + time.ctime() + '] ' + Fore.GREEN + elapsed + Style.RESET_ALL + ' ' + s
-    log_file.write(s + '\n')
+    log_file.write('[' + time.ctime() + '] ' + elapsed + ' ' + s + '\n')
     log_file.flush()
-    print(s + Fore.CYAN + remark + Style.RESET_ALL)
+
+    print(Fore.BLUE + '[' + time.ctime() + '] ' + Fore.GREEN + elapsed + Style.RESET_ALL + ' ' + s + Fore.CYAN + remark + Style.RESET_ALL)
 
 ######################################################################
 
