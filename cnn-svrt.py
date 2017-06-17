@@ -24,6 +24,7 @@
 import time
 import argparse
 import math
+import distutils.util
 
 from colorama import Fore, Back, Style
 
@@ -65,15 +66,15 @@ parser.add_argument('--log_file',
                     type = str, default = 'default.log')
 
 parser.add_argument('--compress_vignettes',
-                    action='store_true', default = True,
+                    type = distutils.util.strtobool, default = 'True',
                     help = 'Use lossless compression to reduce the memory footprint')
 
 parser.add_argument('--deep_model',
-                    action='store_true', default = True,
+                    type = distutils.util.strtobool, default = 'True',
                     help = 'Use Afroze\'s Alexnet-like deep model')
 
 parser.add_argument('--test_loaded_models',
-                    action='store_true', default = False,
+                    type = distutils.util.strtobool, default = 'False',
                     help = 'Should we compute the test errors of loaded models')
 
 args = parser.parse_args()
@@ -269,8 +270,10 @@ if args.nb_train_samples%args.batch_size > 0 or args.nb_test_samples%args.batch_
     raise
 
 if args.compress_vignettes:
+    log_string('using_compressed_vignettes')
     VignetteSet = vignette_set.CompressedVignetteSet
 else:
+    log_string('using_uncompressed_vignettes')
     VignetteSet = vignette_set.VignetteSet
 
 for problem_number in range(1, 24):
