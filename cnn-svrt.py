@@ -255,9 +255,9 @@ for arg in vars(args):
 ######################################################################
 
 def int_to_suffix(n):
-    if n > 1000000 and n%1000000 == 0:
+    if n >= 1000000 and n%1000000 == 0:
         return str(n//1000000) + 'M'
-    elif n > 1000 and n%1000 == 0:
+    elif n >= 1000 and n%1000 == 0:
         return str(n//1000) + 'K'
     else:
         return str(n)
