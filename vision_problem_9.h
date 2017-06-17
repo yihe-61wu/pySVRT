@@ -18,7 +18,7 @@
  *  General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with selector.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with pysvrt.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 #ifndef VISION_PROBLEM_9_H
