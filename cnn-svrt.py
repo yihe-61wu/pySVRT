@@ -284,8 +284,8 @@ for problem_number in range(1, 24):
 
     if torch.cuda.is_available(): model.cuda()
 
-    model_filename = model.name + '_' + \
-                     str(problem_number) + '_' + \
+    model_filename = model.name + '_pb:' + \
+                     str(problem_number) + '_ns:' + \
                      int_to_suffix(args.nb_train_samples) + '.param'
 
     nb_parameters = 0
