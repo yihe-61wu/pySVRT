@@ -66,7 +66,7 @@ parser.add_argument('--batch_size',
                     help = 'Mini-batch size')
 
 parser.add_argument('--log_file',
-                    type = str, default = 'cnn-svrt.log',
+                    type = str, default = 'default.log',
                     help = 'Log file name')
 
 parser.add_argument('--compress_vignettes',
@@ -75,7 +75,7 @@ parser.add_argument('--compress_vignettes',
 
 parser.add_argument('--test_loaded_models',
                     action='store_true', default = False,
-                    help = 'Should we compute the test error of models we load')
+                    help = 'Should we compute the test errors of loaded models')
 
 args = parser.parse_args()
 
