@@ -44,7 +44,7 @@ class VignetteSet:
     def __init__(self, problem_number, nb_samples, batch_size, cuda = False):
 
         if nb_samples%batch_size > 0:
-            print('nb_samples must be a mutiple of batch_size')
+            print('nb_samples must be a multiple of batch_size')
             raise
 
         self.cuda = cuda
@@ -91,7 +91,7 @@ class CompressedVignetteSet:
     def __init__(self, problem_number, nb_samples, batch_size, cuda = False):
 
         if nb_samples%batch_size > 0:
-            print('nb_samples must be a mutiple of batch_size')
+            print('nb_samples must be a multiple of batch_size')
             raise
 
         self.cuda = cuda

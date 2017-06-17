@@ -41,7 +41,7 @@ from torchvision import datasets, transforms, utils
 
 # SVRT
 
-import vignette_set
+import svrtset
 
 ######################################################################
 
@@ -255,10 +255,10 @@ if args.nb_train_samples%args.batch_size > 0 or args.nb_test_samples%args.batch_
 
 if args.compress_vignettes:
     log_string('using_compressed_vignettes')
-    VignetteSet = vignette_set.CompressedVignetteSet
+    VignetteSet = svrtset.CompressedVignetteSet
 else:
     log_string('using_uncompressed_vignettes')
-    VignetteSet = vignette_set.VignetteSet
+    VignetteSet = svrtset.VignetteSet
 
 for problem_number in range(1, 24):
 
