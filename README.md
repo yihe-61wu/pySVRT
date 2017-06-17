@@ -20,6 +20,23 @@ The returned ByteTensor has three dimensions:
  * Pixel row
  * Pixel col
 
+# Installation and test #
+
+Executing
+
+```
+make -j -k
+./test-svrt.py
+```
+
+should generate an image example.png in the current directory.
+
+Note that the image generation does not take advantage of GPUs or
+multi-core, and can be as fast as 10,000 vignettes per second and as
+slow as 40 on a 4GHz i7-6700K.
+
+# Vignette compression #
+
 The two additional functions
 
 ```
@@ -36,23 +53,24 @@ provide a lossless compression scheme adapted to the ByteStorage of
 the vignette ByteTensor (i.e. expecting a lot of 255s, a few 0s, and
 no other value).
 
-They allow to reduce the memory footprint by a factor ~50, and may be
-usefull to deal with very large data-sets and avoid re-generating
-images at every batch.
+This compression reduces the memory footprint by a factor ~50, and may
+be usefull to deal with very large data-sets and avoid re-generating
+images at every batch. It induces a little overhead for decompression,
+and moving from CPU to GPU memory.
 
 See vignette_set.py for a class CompressedVignetteSet using it.
 
-# Installation and test #
+# Testing convolution networks #
 
-Executing
+The file
 
 ```
-make -j -k
-./test-svrt.py
+cnn-svrt.py
 ```
 
-should generate an image example.png in the current directory.
+provides the implementation of two deep networks, and use the
+compressed vignette code to allow the training with several millions
+vignettes on a PC with 16Gb and a GPU with 8Gb.
 
-Note that the image generation does not take advantage of GPUs or
-multi-core, and can be as fast as 10,000 vignettes per second and as
-slow as 40 on a 4GHz i7-6700K.
+The networks were designed by Afroze Baqapuri during an internship at
+Idiap.
