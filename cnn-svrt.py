@@ -144,22 +144,6 @@ class AfrozeShallowNet(nn.Module):
 
 # Afroze's DeepNet
 
-#                       map size   nb. maps
-#                     ----------------------
-#    input                128x128    1
-# -- conv(21x21 x 32 stride=4) -> 28x28    32
-# -- max(2x2)                  -> 14x14      6
-# -- conv(7x7 x 96)            -> 8x8      16
-# -- max(2x2)                  -> 4x4      16
-# -- conv(5x5 x 96)            -> 26x36      16
-# -- conv(3x3 x 128)           -> 36x36      16
-# -- conv(3x3 x 128)           -> 36x36      16
-
-# -- conv(5x5 x 120) -> 1x1        120
-# -- reshape           -> 120        1
-# -- full(3x84)      -> 84         1
-# -- full(84x2)        -> 2          1
-
 class AfrozeDeepNet(nn.Module):
     def __init__(self):
         super(AfrozeDeepNet, self).__init__()
