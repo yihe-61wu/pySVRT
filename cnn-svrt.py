@@ -260,7 +260,6 @@ class vignette_logger():
                 m,
                 n), ' [ETA ' + time.ctime(time.time() + dt * (n - m)) + ']'
             )
-            self.start_t = t
 
 ######################################################################
 
