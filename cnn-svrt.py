@@ -85,7 +85,7 @@ args = parser.parse_args()
 
 ######################################################################
 
-log_file = open(args.log_file, 'w')
+log_file = open(args.log_file, 'a')
 pred_log_t = None
 
 print(Fore.RED + 'Logging into ' + args.log_file + Style.RESET_ALL)
@@ -272,6 +272,8 @@ class vignette_logger():
 if args.nb_train_samples%args.batch_size > 0 or args.nb_test_samples%args.batch_size > 0:
     print('The number of samples must be a multiple of the batch size.')
     raise
+
+log_string('############### start ###############')
 
 if args.compress_vignettes:
     log_string('using_compressed_vignettes')
