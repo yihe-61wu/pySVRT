@@ -250,16 +250,18 @@ def int_to_suffix(n):
 class vignette_logger():
     def __init__(self, delay_min = 60):
         self.start_t = time.time()
+        self.last_t = self.start_t
         self.delay_min = delay_min
 
     def __call__(self, n, m):
         t = time.time()
-        if t > self.start_t + self.delay_min:
+        if t > self.last_t + self.delay_min:
             dt = (t - self.start_t) / m
             log_string('sample_generation {:d} / {:d}'.format(
                 m,
                 n), ' [ETA ' + time.ctime(time.time() + dt * (n - m)) + ']'
             )
+            self.last_t = t
 
 ######################################################################
 
