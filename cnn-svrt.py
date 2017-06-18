@@ -77,6 +77,10 @@ parser.add_argument('--test_loaded_models',
                     type = distutils.util.strtobool, default = 'False',
                     help = 'Should we compute the test errors of loaded models')
 
+parser.add_argument('--problems',
+                    type = str, default = '1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23',
+                    help = 'What problem to process')
+
 args = parser.parse_args()
 
 ######################################################################
@@ -276,7 +280,7 @@ else:
     log_string('using_uncompressed_vignettes')
     VignetteSet = svrtset.VignetteSet
 
-for problem_number in range(1, 24):
+for problem_number in map(int, args.problems.split(',')):
 
     log_string('############### problem ' + str(problem_number) + ' ###############')
 
