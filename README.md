@@ -1,7 +1,8 @@
 # Introduction #
 
-This is the port of the Synthetic Visual Reasoning Test to the pytorch
-framework.
+This is a port of the Synthetic Visual Reasoning Test problems to the
+pytorch framework, with an implementation of two convolutional
+networks to solve them.
 
 The main function is
 
