@@ -41,7 +41,7 @@ def generate_one_batch(s):
 
 class VignetteSet:
 
-    def __init__(self, problem_number, nb_samples, batch_size, cuda = False):
+    def __init__(self, problem_number, nb_samples, batch_size, cuda = False, logger = None):
 
         if nb_samples%batch_size > 0:
             print('nb_samples must be a multiple of batch_size')
@@ -61,6 +61,7 @@ class VignetteSet:
         self.data = []
         for b in range(0, self.nb_batches):
             self.data.append(generate_one_batch(mp_args[b]))
+            if logger is not None: logger(self.nb_batches * self.batch_size, b * self.batch_size)
 
         # Weird thing going on with the multi-processing, waiting for more info
 
@@ -88,7 +89,7 @@ class VignetteSet:
 ######################################################################
 
 class CompressedVignetteSet:
-    def __init__(self, problem_number, nb_samples, batch_size, cuda = False):
+    def __init__(self, problem_number, nb_samples, batch_size, cuda = False, logger = None):
 
         if nb_samples%batch_size > 0:
             print('nb_samples must be a multiple of batch_size')
@@ -111,6 +112,7 @@ class CompressedVignetteSet:
             acc_sq += input.float().pow(2).sum() /  input.numel()
             self.targets.append(target)
             self.input_storages.append(svrt.compress(input.storage()))
+            if logger is not None: logger(self.nb_batches * self.batch_size, b * self.batch_size)
 
         self.mean = acc / self.nb_batches
         self.std = sqrt(acc_sq / self.nb_batches - self.mean * self.mean)

@@ -247,6 +247,21 @@ def int_to_suffix(n):
     else:
         return str(n)
 
+class vignette_logger():
+    def __init__(self, delay_min = 60):
+        self.start_t = time.time()
+        self.delay_min = delay_min
+
+    def __call__(self, n, m):
+        t = time.time()
+        if t > self.start_t + self.delay_min:
+            dt = (t - self.start_t) / m
+            log_string('sample_generation {:d} / {:d}'.format(
+                m,
+                n), ' [ETA ' + time.ctime(time.time() + dt * (n - m)) + ']'
+            )
+            self.start_t = t
+
 ######################################################################
 
 if args.nb_train_samples%args.batch_size > 0 or args.nb_test_samples%args.batch_size > 0:
@@ -300,7 +315,8 @@ for problem_number in range(1, 24):
 
         train_set = VignetteSet(problem_number,
                                 args.nb_train_samples, args.batch_size,
-                                cuda = torch.cuda.is_available())
+                                cuda = torch.cuda.is_available(),
+                                logger = vignette_logger())
 
         log_string('data_generation {:0.2f} samples / s'.format(
             train_set.nb_samples / (time.time() - t))
