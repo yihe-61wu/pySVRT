@@ -13,7 +13,9 @@ make -j -k
 ./test-svrt.py
 ```
 
-should generate an image example.png in the current directory.
+should generate an image
+[`example.png`](https://fleuret.org/git-extract/pysvrt/example.png) in
+the current directory.
 
 Note that the image generation does not take advantage of GPUs or
 multi-core, and can be as fast as 10,000 vignettes per second and as
@@ -23,7 +25,7 @@ slow as 40 on a 4GHz i7-6700K.
 
 ## Vignette sets ##
 
-The svrtset.py implements the classes `VignetteSet` and
+The file [`svrtset.py`](https://fleuret.org/git-extract/pysvrt/svrtset.py) implements the classes `VignetteSet` and
 `CompressedVignetteSet` with the following constructor
 
 ```
@@ -83,7 +85,8 @@ See vignette_set.py for a class CompressedVignetteSet using it.
 
 # Testing convolution networks #
 
-The file `cnn-svrt.py` provides the implementation of two deep
-networks designed by Afroze Baqapuri during an internship at Idiap,
-and allows to train them with several millions vignettes on a PC with
-16Gb and a GPU with 8Gb.
+The file
+[`cnn-svrt.py`](https://fleuret.org/git-extract/pysvrt/cnn-svrt.py)
+provides the implementation of two deep networks designed by Afroze
+Baqapuri during an internship at Idiap, and allows to train them with
+several millions vignettes on a PC with 16Gb and a GPU with 8Gb.
