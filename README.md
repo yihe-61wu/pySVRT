@@ -27,13 +27,13 @@ The svrtset.py implements the classes `VignetteSet` and
 `CompressedVignetteSet` with the following constructor
 
 ```
-def __init__(self, problem_number, nb_samples, batch_size, cuda = False, logger = None):
+__init__(problem_number, nb_samples, batch_size, cuda = False, logger = None)
 ```
 
 and the following method to return one batch
 
 ```
-def get_batch(self, b):
+(torch.FloatTensor, torch.LongTensor) get_batch(b)
 ```
 
 ## Low-level functions ##
