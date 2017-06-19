@@ -36,6 +36,9 @@ and the following method to return one batch
 (torch.FloatTensor, torch.LongTensor) get_batch(b)
 ```
 
+as a pair composed of a 4d 'input' Tensor (i.e. single channel 128x128
+images), and a 1d 'target' Tensor (i.e. Boolean labels).
+
 ## Low-level functions ##
 
 The main function for genering vignettes is
@@ -80,15 +83,7 @@ See vignette_set.py for a class CompressedVignetteSet using it.
 
 # Testing convolution networks #
 
-The file
-
-```
-cnn-svrt.py
-```
-
-provides the implementation of two deep networks, and use the
-compressed vignette code to allow the training with several millions
-vignettes on a PC with 16Gb and a GPU with 8Gb.
-
-The networks were designed by Afroze Baqapuri during an internship at
-Idiap.
+The file `cnn-svrt.py` provides the implementation of two deep
+networks designed by Afroze Baqapuri during an internship at Idiap,
+and allows to train them with several millions vignettes on a PC with
+16Gb and a GPU with 8Gb.
