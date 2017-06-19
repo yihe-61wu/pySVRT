@@ -4,23 +4,6 @@ This is a port of the Synthetic Visual Reasoning Test problems to the
 pytorch framework, with an implementation of two convolutional
 networks to solve them.
 
-The main function is
-
-```
-torch.ByteTensor svrt.generate_vignettes(int problem_number, torch.LongTensor labels)
-```
-
-where
-
- * `problem_number` indicates which of the 23 problem to use
- * `labels` indicates the boolean labels of the vignettes to generate
-
-The returned ByteTensor has three dimensions:
-
- * Vignette index
- * Pixel row
- * Pixel col
-
 # Installation and test #
 
 Executing
@@ -36,7 +19,41 @@ Note that the image generation does not take advantage of GPUs or
 multi-core, and can be as fast as 10,000 vignettes per second and as
 slow as 40 on a 4GHz i7-6700K.
 
-# Vignette compression #
+# Vignette generation and compression #
+
+## Vignette sets ##
+
+The svrtset.py implements the classes `VignetteSet` and
+`CompressedVignetteSet` with the following constructor
+
+```
+def __init__(self, problem_number, nb_samples, batch_size, cuda = False, logger = None):
+```
+
+and the following method to return one batch
+
+```
+def get_batch(self, b):
+```
+
+## Low-level functions ##
+
+The main function for genering vignettes is
+
+```
+torch.ByteTensor svrt.generate_vignettes(int problem_number, torch.LongTensor labels)
+```
+
+where
+
+ * `problem_number` indicates which of the 23 problem to use
+ * `labels` indicates the boolean labels of the vignettes to generate
+
+The returned ByteTensor has three dimensions:
+
+ * Vignette index
+ * Pixel row
+ * Pixel col
 
 The two additional functions
 
