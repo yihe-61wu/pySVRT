@@ -25,6 +25,7 @@ import time
 import argparse
 import math
 import distutils.util
+import re
 
 from colorama import Fore, Back, Style
 
@@ -94,13 +95,15 @@ args = parser.parse_args()
 
 log_file = open(args.log_file, 'a')
 pred_log_t = None
+last_tag_t = time.time()
 
 print(Fore.RED + 'Logging into ' + args.log_file + Style.RESET_ALL)
 
 # Log and prints the string, with a time stamp. Does not log the
 # remark
+
 def log_string(s, remark = ''):
-    global pred_log_t
+    global pred_log_t, last_tag_t
 
     t = time.time()
 
@@ -111,10 +114,14 @@ def log_string(s, remark = ''):
 
     pred_log_t = t
 
-    log_file.write('[' + time.ctime() + '] ' + elapsed + ' ' + s + '\n')
+    if t > last_tag_t + 3600:
+        last_tag_t = t
+        print(Fore.RED + time.ctime() + Style.RESET_ALL)
+
+    log_file.write(re.sub(' ', '_', time.ctime()) + ' ' + elapsed + ' ' + s + '\n')
     log_file.flush()
 
-    print(Fore.BLUE + '[' + time.ctime() + '] ' + Fore.GREEN + elapsed + Style.RESET_ALL + ' ' + s + Fore.CYAN + remark + Style.RESET_ALL)
+    print(Fore.BLUE + time.ctime() + ' ' + Fore.GREEN + elapsed + Style.RESET_ALL + ' ' + s + Fore.CYAN + remark + Style.RESET_ALL)
 
 ######################################################################
 
