@@ -111,6 +111,7 @@ class CompressedVignetteSet:
 
         acc = 0.0
         acc_sq = 0.0
+        usage = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
         for b in range(0, self.nb_batches):
             target = torch.LongTensor(self.batch_size).bernoulli_(0.5)
             input = svrt.generate_vignettes(problem_number, target)
@@ -133,6 +134,10 @@ class CompressedVignetteSet:
             if resource.getrusage(resource.RUSAGE_SELF).ru_maxrss > 16e6:
                 print('Memory leak?!')
                 raise
+
+        mem = (resource.getrusage(resource.RUSAGE_SELF).ru_maxrss - usage) * 1024
+        print('Using ' + str(mem / (1024 * 1024)) + 'Gb / ' +
+              str(mem / self.nb_samples) + ' bytes per sample')
 
         self.mean = acc / self.nb_batches
         self.std = sqrt(acc_sq / self.nb_batches - self.mean * self.mean)
