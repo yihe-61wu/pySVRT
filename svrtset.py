@@ -136,7 +136,7 @@ class CompressedVignetteSet:
                 raise
 
         mem = (resource.getrusage(resource.RUSAGE_SELF).ru_maxrss - usage) * 1024
-        print('Using ' + str(mem / (1024 * 1024)) + 'Gb / ' +
+        print('Using ' + str(mem / (1024 * 1024 * 1024)) + 'Gb / ' +
               str(mem / self.nb_samples) + ' bytes per sample')
 
         self.mean = acc / self.nb_batches
