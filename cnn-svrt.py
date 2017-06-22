@@ -250,7 +250,7 @@ class DeepNet2(nn.Module):
         x = fn.max_pool2d(x, kernel_size=2)
         x = fn.relu(x)
 
-        x = x.view(-1, 1536)
+        x = x.view(-1, 2048)
 
         x = self.fc1(x)
         x = fn.relu(x)
