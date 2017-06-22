@@ -26,20 +26,21 @@ slow as 40 on a 4GHz i7-6700K.
 ## Vignette sets ##
 
 The file [`svrtset.py`](https://fleuret.org/git-extract/pysvrt/svrtset.py) implements the classes `VignetteSet` and
-`CompressedVignetteSet` with the following constructor
+`CompressedVignetteSet` both with a constructor
 
 ```
 __init__(problem_number, nb_samples, batch_size, cuda = False, logger = None)
 ```
 
-and the following method to return one batch
+and a method
 
 ```
 (torch.FloatTensor, torch.LongTensor) get_batch(b)
 ```
 
-as a pair composed of a 4d 'input' Tensor (i.e. single channel 128x128
-images), and a 1d 'target' Tensor (i.e. Boolean labels).
+which returns a pair composed of a 4d 'input' Tensor (i.e. single
+channel 128x128 images), and a 1d 'target' Tensor (i.e. Boolean
+labels).
 
 ## Low-level functions ##
 
