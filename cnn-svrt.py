@@ -229,7 +229,7 @@ class DeepNet2(nn.Module):
         self.conv5 = nn.Conv2d(128, 128, kernel_size=3, padding=1)
         self.fc1 = nn.Linear(2048, 512)
         self.fc2 = nn.Linear(512, 512)
-        self.fc3 = nn.Linear(256, 2)
+        self.fc3 = nn.Linear(512, 2)
 
     def forward(self, x):
         x = self.conv1(x)
