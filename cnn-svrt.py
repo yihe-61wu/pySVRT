@@ -24,8 +24,10 @@
 import time
 import argparse
 import math
+
 import distutils.util
 import re
+import signal
 
 from colorama import Fore, Back, Style
 
@@ -127,7 +129,24 @@ def log_string(s, remark = ''):
     log_file.write(re.sub(' ', '_', time.ctime()) + ' ' + elapsed + ' ' + s + '\n')
     log_file.flush()
 
-    print(Fore.BLUE + time.ctime() + ' ' + Fore.GREEN + elapsed + Style.RESET_ALL + ' ' + s + Fore.CYAN + remark + Style.RESET_ALL)
+    print(Fore.BLUE + time.ctime() + ' ' + Fore.GREEN + elapsed \
+          + Style.RESET_ALL
+          + ' ' \
+          + s + Fore.CYAN + remark \
+          + Style.RESET_ALL)
+
+######################################################################
+
+def handler_sigint(signum, frame):
+    log_string('got sigint')
+    exit(0)
+
+def handler_sigterm(signum, frame):
+    log_string('got sigterm')
+    exit(0)
+
+signal.signal(signal.SIGINT, handler_sigint)
+signal.signal(signal.SIGTERM, handler_sigterm)
 
 ######################################################################
 
