@@ -355,9 +355,9 @@ def nb_errors(model, data_set, mistake_filename_pattern = None):
                     img = input[i].clone()
                     img.sub_(img.min())
                     img.div_(img.max())
-                    torchvision.utils.save_image(img,
-                                                 mistake_filename_pattern.format(b + i, target[i]))
-
+                    filename = mistake_filename_pattern.format(b + i, target[i])
+                    torchvision.utils.save_image(img, filename)
+                    print(Fore.RED + 'Wrote ' + filename + Style.RESET_ALL)
     return ne
 
 ######################################################################
@@ -560,7 +560,7 @@ for problem_number in map(int, args.problems.split(',')):
                                cuda = torch.cuda.is_available())
 
         nb_test_errors = nb_errors(model, test_set,
-                                   mistake_filename_pattern = 'mistake_{:d}_{:06d}.png')
+                                   mistake_filename_pattern = 'mistake_{:06d}_{:d}.png')
 
         log_string('test_error {:d} {:.02f}% {:d} {:d}'.format(
             problem_number,
