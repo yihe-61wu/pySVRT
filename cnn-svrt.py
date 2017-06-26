@@ -355,7 +355,8 @@ def nb_errors(model, data_set, mistake_filename_pattern = None):
                     img = input[i].clone()
                     img.sub_(img.min())
                     img.div_(img.max())
-                    filename = mistake_filename_pattern.format(b + i, target[i])
+                    k = b * data_set.batch_size + i
+                    filename = mistake_filename_pattern.format(k, target[i])
                     torchvision.utils.save_image(img, filename)
                     print(Fore.RED + 'Wrote ' + filename + Style.RESET_ALL)
     return ne
