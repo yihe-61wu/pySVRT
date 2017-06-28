@@ -44,7 +44,7 @@ labels).
 
 ## Low-level functions ##
 
-The main function for genering vignettes is
+The main function for generating vignettes is
 
 ```
 torch.ByteTensor svrt.generate_vignettes(int problem_number, torch.LongTensor labels)
