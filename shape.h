@@ -32,7 +32,13 @@
 class Shape {
   static const int margin = 1;
   static const int nb_max_pixels = Vignette::width * Vignette::height;
+
+#if __cplusplus >= 201103L
+  static constexpr scalar_t gap_max = 0.25;
+#else
   static const scalar_t gap_max = 0.25;
+#endif
+
   int n_pixels1, n_pixels2, n_pixels3, n_pixels4;
   int nb_pixels;
   scalar_t xc, yc;
