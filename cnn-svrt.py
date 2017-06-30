@@ -248,13 +248,13 @@ class DeepNet2(nn.Module):
 
     def __init__(self):
         super(DeepNet2, self).__init__()
-        nb_channels = 512
+        self.nb_channels = 512
         self.conv1 = nn.Conv2d(  1,  32, kernel_size=7, stride=4, padding=3)
         self.conv2 = nn.Conv2d( 32, nb_channels, kernel_size=5, padding=2)
         self.conv3 = nn.Conv2d(nb_channels, nb_channels, kernel_size=3, padding=1)
         self.conv4 = nn.Conv2d(nb_channels, nb_channels, kernel_size=3, padding=1)
         self.conv5 = nn.Conv2d(nb_channels, nb_channels, kernel_size=3, padding=1)
-        self.fc1 = nn.Linear(16 * nb_channels, 512)
+        self.fc1 = nn.Linear(16 * self.nb_channels, 512)
         self.fc2 = nn.Linear(512, 512)
         self.fc3 = nn.Linear(512, 2)
 
@@ -277,7 +277,7 @@ class DeepNet2(nn.Module):
         x = fn.max_pool2d(x, kernel_size=2)
         x = fn.relu(x)
 
-        x = x.view(-1, 4096)
+        x = x.view(-1, 16 * self.nb_channels)
 
         x = self.fc1(x)
         x = fn.relu(x)
