@@ -105,6 +105,10 @@ args = parser.parse_args()
 ######################################################################
 
 log_file = open(args.log_file, 'a')
+log_file.write('\n')
+log_file.write('@@@@@@@@@@@@@@@@@@@ ' + time.ctime() + ' @@@@@@@@@@@@@@@@@@@\n')
+log_file.write('\n')
+
 pred_log_t = None
 last_tag_t = time.time()
 
@@ -457,8 +461,6 @@ def save_examplar_vignettes(data_set, nb, name):
 if args.nb_train_samples%args.batch_size > 0 or args.nb_test_samples%args.batch_size > 0:
     print('The number of samples must be a multiple of the batch size.')
     raise
-
-log_string('############### start ###############')
 
 if args.compress_vignettes:
     log_string('using_compressed_vignettes')
