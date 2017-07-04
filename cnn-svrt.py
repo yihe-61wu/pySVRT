@@ -540,7 +540,10 @@ for problem_number in map(int, args.problems.split(',')):
         else:
             validation_set = None
 
-        train_model(model, model_filename, train_set, validation_set, nb_epochs_done = nb_epochs_done)
+        train_model(model, model_filename,
+                    train_set, validation_set,
+                    nb_epochs_done = nb_epochs_done)
+
         log_string('saved_model ' + model_filename)
 
         nb_train_errors = nb_errors(model, train_set)
