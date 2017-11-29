@@ -29,10 +29,7 @@ import distutils.util
 import re
 import signal
 
-try:
-    from colorama import Fore, Back, Style
-except ImportError:
-    Fore, Back, Style = '', '', ''
+from colorama import Fore, Back, Style
 
 # Pytorch
 
