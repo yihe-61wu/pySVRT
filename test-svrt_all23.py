@@ -39,7 +39,7 @@ import svrt
 labels = torch.LongTensor(32).zero_()
 labels.narrow(0, 0, labels.size(0)//2).fill_(1)
 
-for problem in range(1, 24):
+for problem in (range(1, 24) + [51, 151, 52, 152] + [101, 201, 301, 401, 501, 601, 901]):
 
     x = svrt.generate_vignettes(problem, labels)
 
@@ -48,6 +48,10 @@ for problem in range(1, 24):
     x = x.view(x.size(0), 1, x.size(1), x.size(2))
 
     x.div_(255)
+
+    if problem > 100:
+        pass
+        #x = 1 - x
 
     torchvision.utils.save_image(x, 'example' + str(problem) + '.png')
 
