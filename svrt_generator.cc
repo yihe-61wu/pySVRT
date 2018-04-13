@@ -33,6 +33,13 @@ using namespace std;
 #include "random.h"
 
 #include "vision_problem_1.h"
+#include "vision_problem_101.h"
+#include "vision_problem_201.h"
+#include "vision_problem_301.h"
+#include "vision_problem_401.h"
+#include "vision_problem_501.h"
+#include "vision_problem_601.h"
+#include "vision_problem_901.h"
 #include "vision_problem_2.h"
 #include "vision_problem_3.h"
 #include "vision_problem_4.h"
@@ -55,8 +62,12 @@ using namespace std;
 #include "vision_problem_21.h"
 #include "vision_problem_22.h"
 #include "vision_problem_23.h"
+#include "vision_problem_51.h"
+#include "vision_problem_52.h"
+#include "vision_problem_151.h"
+#include "vision_problem_152.h"
 
-#define NB_PROBLEMS 23
+#define NB_PROBLEMS 9999
 
 VignetteGenerator *new_generator(int nb) {
   VignetteGenerator *generator;
@@ -64,6 +75,27 @@ VignetteGenerator *new_generator(int nb) {
   switch(nb) {
   case 1:
     generator = new VisionProblem_1();
+    break;
+  case 101:
+    generator = new VisionProblem_101();
+    break;
+  case 201:
+    generator = new VisionProblem_201();
+    break;
+  case 301:
+    generator = new VisionProblem_301();
+    break;
+  case 401:
+    generator = new VisionProblem_401();
+    break;
+  case 501:
+    generator = new VisionProblem_501();
+    break;
+  case 601:
+    generator = new VisionProblem_601();
+    break;
+  case 901:
+    generator = new VisionProblem_901();
     break;
   case 2:
     generator = new VisionProblem_2();
@@ -130,6 +162,18 @@ VignetteGenerator *new_generator(int nb) {
     break;
   case 23:
     generator = new VisionProblem_23();
+    break;
+  case 51:
+    generator = new VisionProblem_51();
+    break;
+  case 52:
+    generator = new VisionProblem_52();
+    break;
+  case 151:
+    generator = new VisionProblem_151();
+    break;
+  case 152:
+    generator = new VisionProblem_152();
     break;
   default:
     cerr << "Can not find problem "
