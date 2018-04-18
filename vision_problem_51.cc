@@ -58,7 +58,7 @@ void VisionProblem_51::generate(int label, Vignette *vignette) {
     r1 += random_uniform_0_1() * (ring_outer_radius - ring_inner_radius);
 
     // Now put these shapes randomly around this circle
-    int num_conseq;
+    int num_conseq = 1;
     for(int n = 1; n < nb_shapes; n++) {
       t1 = random_uniform_0_1() * M_PI * 2;
       xs[n] = int(xs[0] + r1 * cos(t1));
