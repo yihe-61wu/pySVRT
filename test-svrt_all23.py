@@ -21,6 +21,7 @@
 #  You should have received a copy of the GNU General Public License
 #  along with svrt.  If not, see <http://www.gnu.org/licenses/>.
 
+import os
 import time
 
 import torch
@@ -39,6 +40,9 @@ import svrt
 labels = torch.LongTensor(32).zero_()
 labels.narrow(0, 0, labels.size(0)//2).fill_(1)
 
+if not os.path.exists('examples'):
+    os.makedirs('examples')
+
 for problem in (range(1, 24) + [51, 151, 52, 152] + [101, 201, 301, 401, 501, 601, 901]):
 
     x = svrt.generate_vignettes(problem, labels)
@@ -53,6 +57,6 @@ for problem in (range(1, 24) + [51, 151, 52, 152] + [101, 201, 301, 401, 501, 60
         pass
         #x = 1 - x
 
-    torchvision.utils.save_image(x, 'example' + str(problem) + '.png')
+    torchvision.utils.save_image(x, 'examples/example' + str(problem) + '.png')
 
 print('Wrote example pngs')
