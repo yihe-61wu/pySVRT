@@ -75,6 +75,12 @@ if os.path.isdir(args.data_dir):
     os.makedirs(args.data_dir + '/' + name + '0', exist_ok = True)
     os.makedirs(args.data_dir + '/' + name + '1', exist_ok = True)
 else:
+    # FileNotFoundError does not exist in Python 2, so this is a work-around
+    # where we define it as IOError.
+    try:
+        FileNotFoundError
+    except NameError:
+        FileNotFoundError = IOError
     raise FileNotFoundError('Cannot find ' + args.data_dir)
 
 for n in range(0, args.nb_samples, args.batch_size):
