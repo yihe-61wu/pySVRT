@@ -2,6 +2,8 @@
 # Custom ignore list
 ##---------------------------------------------------
 
+Makefile.depend
+svrt/*
 example*.png
 
 
