@@ -43,12 +43,12 @@ void VisionProblem_2::generate(int label, Vignette *vignette) {
     do {
       x_big = int(random_uniform_0_1() * Vignette::width);
       y_big = int(random_uniform_0_1() * Vignette::height);
-    } while(big_shape.overwrites(vignette, x_big, y_big));
+    } while(vignette->overwrites(&big_shape, x_big, y_big));
 
     // The mask will encode either a thin area the small shape should
     // intersect with (class 1) or a thick one it should not (class 0)
 
-    big_shape.draw(0, &mask, x_big, y_big);
+    mask.draw(0, &big_shape, x_big, y_big);
 
     if(label) {
       mask.grow();
@@ -58,7 +58,7 @@ void VisionProblem_2::generate(int label, Vignette *vignette) {
       }
     }
 
-    big_shape.draw(0, vignette, x_big, y_big);
+    vignette->draw(0, &big_shape, x_big, y_big);
     vignette->fill(x_big, y_big, 128);
     vignette->switch_values(128, 255);
 
@@ -68,13 +68,13 @@ void VisionProblem_2::generate(int label, Vignette *vignette) {
         small_shape.randomize(small_part_size / 2, small_part_hole_size / 2);
         x_small = x_big + int((random_uniform_0_1() - 0.5) * big_part_size);
         y_small = y_big + int((random_uniform_0_1() - 0.5) * big_part_size);
-      } while(small_shape.overwrites(vignette, x_small, y_small)); // ||
+      } while(vignette->overwrites(&small_shape, x_small, y_small)); // ||
       nb_attempts++;
     } while(nb_attempts < max_nb_attempts &&
-            ((label && !small_shape.overwrites(&mask, x_small, y_small)) ||
-             (!label && small_shape.overwrites(&mask, x_small, y_small))));
+            ((label && !mask.overwrites(&small_shape, x_small, y_small)) ||
+             (!label && mask.overwrites(&small_shape, x_small, y_small))));
 
     vignette->replace_value(128, 255);
-    small_shape.draw(1, vignette, x_small, y_small);
+    vignette->draw(1, &small_shape, x_small, y_small);
   } while(nb_attempts >= max_nb_attempts);
 }

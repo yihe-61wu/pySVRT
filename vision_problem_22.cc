@@ -54,9 +54,9 @@ void VisionProblem_22::generate(int label, Vignette *vignette) {
       if(n == 0 || label == 0) {
         shape.randomize(part_size/2, hole_size/2);
       }
-      error |= shape.overwrites(vignette, xs[n], ys[n]);
+      error |= vignette->overwrites(&shape, xs[n], ys[n]);
       if(!error) {
-        shape.draw(n, vignette, xs[n], ys[n]);
+        vignette->draw(n, &shape, xs[n], ys[n]);
       }
     }
   } while(error);

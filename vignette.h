@@ -26,10 +26,14 @@
 #define VIGNETTE_H
 
 #include "misc.h"
+#include "shape.h"
 
 #define KEEP_PART_PRESENCE
 
 class Vignette {
+  int overwrites(Shape *shape, scalar_t xc, scalar_t yc, int first, int nb);
+  void draw(int part_number, Shape *shape, scalar_t xc, scalar_t yc, int first, int nb);
+
 public:
   static const int width = 128;
   static const int height = width;
@@ -48,6 +52,9 @@ public:
   void superpose(Vignette *infront, Vignette *inback);
   int intersection(Vignette *v);
   void grow();
+
+  int overwrites(Shape *shape, scalar_t xc, scalar_t yc);
+  void draw(int part_number, Shape *shape, scalar_t xc, scalar_t yc);
 
 };
 

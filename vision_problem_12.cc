@@ -72,9 +72,9 @@ void VisionProblem_12::generate(int label, Vignette *vignette) {
       xs = int(xc + radius * cos(gamma));
       ys = int(yc + radius * sin(gamma));
 
-      error |= shape.overwrites(vignette, xs, ys);
+      error |= vignette->overwrites(&shape, xs, ys);
       if(!error) {
-        shape.draw(n, vignette, xs, ys);
+        vignette->draw(n, &shape, xs, ys);
       }
     }
   } while(error);

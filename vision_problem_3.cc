@@ -53,17 +53,17 @@ void VisionProblem_3::generate(int label, Vignette *vignette) {
             xs = int(random_uniform_0_1() * Vignette::width);
             ys = int(random_uniform_0_1() * Vignette::height);
             shape.randomize(part_size, hole_size);
-          } while(shape.overwrites(&tmp, xs, ys)); // check not out-of-vignette
+          } while(tmp.overwrites(&shape, xs, ys)); // check not out-of-vignette
 
           // omg this is ugly
           if(label && s == 1) {
             proper_margin = 1;
           } else {
-            proper_margin = !shape.overwrites(&avoid, xs, ys);
+            proper_margin = !avoid.overwrites(&shape, xs, ys);
           }
 
           if((label && (s == 1 || s == 3)) || (!label && (s >= 2))) {
-            proper_connection = shape.overwrites(vignette, xs, ys);
+            proper_connection = vignette->overwrites(&shape, xs, ys);
           } else {
             proper_connection = 1;
           }
@@ -72,7 +72,7 @@ void VisionProblem_3::generate(int label, Vignette *vignette) {
 
         } while(nb_attempts < max_nb_attempts && !proper_margin);
 
-        shape.draw(s, &tmp, xs, ys);
+        tmp.draw(s, &shape, xs, ys);
         tmp.fill(xs, ys, 128);
 
         if(proper_margin && proper_connection) {
@@ -88,7 +88,7 @@ void VisionProblem_3::generate(int label, Vignette *vignette) {
       } while(nb_attempts < max_nb_attempts && (!proper_margin || !proper_connection));
 
       if(nb_attempts < max_nb_attempts) {
-        shape.draw(s, vignette, xs, ys);
+        vignette->draw(s, &shape, xs, ys);
         vignette->fill(xs, ys, 128);
         if((label && s < 2) || (!label && s < 1)) {
           for(int k = 0; k < dist_min; k++) tmp.grow();

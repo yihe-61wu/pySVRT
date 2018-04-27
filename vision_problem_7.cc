@@ -44,7 +44,7 @@ void VisionProblem_7::generate(int label, Vignette *vignette) {
     do {
       xs = int(random_uniform_0_1() * Vignette::width);
       ys = int(random_uniform_0_1() * Vignette::height);
-    } while(shape.overwrites(vignette, xs, ys));
-    shape.draw(s, vignette, xs, ys);
+    } while(vignette->overwrites(&shape, xs, ys));
+    vignette->draw(s, &shape, xs, ys);
   }
 }

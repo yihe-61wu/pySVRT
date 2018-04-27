@@ -99,107 +99,72 @@ void Vignette::grow() {
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+int Vignette::overwrites(Shape *shape, scalar_t xc, scalar_t yc,
+                         int n1, int n2) {
+  int x1 = int(shape->x_pixels[n1 % shape->nb_pixels] + xc);
+  int y1 = int(shape->y_pixels[n1 % shape->nb_pixels] + yc);
+  int x2 = int(shape->x_pixels[n2 % shape->nb_pixels] + xc);
+  int y2 = int(shape->y_pixels[n2 % shape->nb_pixels] + yc);
+  int n3 = (n1 + n2) / 2;
+
+  if(n1 + 1 < n2 && (abs(x1 - x2) > 1 || abs(y1 - y2) > 1)) {
+    return
+      overwrites(shape, xc, yc, n1, n3) ||
+      overwrites(shape, xc, yc, n3, n2);
+  }
+  if(x1 < shape->margin || x1 >= Vignette::width - shape->margin ||
+      y1 < shape->margin || y1 >= Vignette::height - shape->margin) {
+    return 1;
+  }
+  if(shape->margin <= 0) {
+    return 0;
+  }
+  for(int xx = x1 - shape->margin; xx <= x1 + shape->margin; xx++) {
+    for(int yy = y1 - shape->margin; yy <= y1 + shape->margin; yy++) {
+      if(content[xx + Vignette::width * yy] != 255) {
+        return 1;
+      }
+    }
+  }
+
+  return 0;
+}
+
+int Vignette::overwrites(Shape *shape, scalar_t xc, scalar_t yc) {
+  return
+    overwrites(shape, xc, yc, shape->n_pixels1, shape->n_pixels2) ||
+    overwrites(shape, xc, yc, shape->n_pixels2, shape->n_pixels3) ||
+    overwrites(shape, xc, yc, shape->n_pixels3, shape->n_pixels4) ||
+    overwrites(shape, xc, yc, shape->n_pixels4, shape->nb_pixels);
+}
+
+void Vignette::draw(int part_number, Shape *shape, scalar_t xc,
+                    scalar_t yc, int n1, int n2) {
+  int x1 = int(shape->x_pixels[n1 % shape->nb_pixels] + xc);
+  int y1 = int(shape->y_pixels[n1 % shape->nb_pixels] + yc);
+  int x2 = int(shape->x_pixels[n2 % shape->nb_pixels] + xc);
+  int y2 = int(shape->y_pixels[n2 % shape->nb_pixels] + yc);
+  int n3 = (n1 + n2) / 2;
+
+  if(n1 + 1 < n2 && (abs(x1 - x2) > 1 || abs(y1 - y2) > 1)) {
+    draw(part_number, shape, xc, yc, n1, n3);
+    draw(part_number, shape, xc, yc, n3, n2);
+  } else {
+    if(x1 >= shape->margin && x1 < Vignette::width-shape->margin &&
+       y1 >= shape->margin && y1 < Vignette::height-shape->margin) {
+      content[x1 + Vignette::width * y1] = 0;
+#ifdef KEEP_PART_PRESENCE
+      part_presence[x1 + Vignette::width * y1] |= (1 << part_number);
+#endif
+    } else {
+      abort();
+    }
+  }
+}
+
+void Vignette::draw(int part_number, Shape *shape, scalar_t xc, scalar_t yc) {
+  draw(part_number, shape, xc, yc, shape->n_pixels1, shape->n_pixels2);
+  draw(part_number, shape, xc, yc, shape->n_pixels2, shape->n_pixels3);
+  draw(part_number, shape, xc, yc, shape->n_pixels3, shape->n_pixels4);
+  draw(part_number, shape, xc, yc, shape->n_pixels4, shape->nb_pixels);
+}

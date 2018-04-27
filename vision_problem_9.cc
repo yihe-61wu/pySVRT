@@ -60,14 +60,14 @@ void VisionProblem_9::generate(int label, Vignette *vignette) {
     error = 0;
     for(int n = 0; n < nb_shapes; n++) {
       if(n < 2) {
-        error |= small_shape.overwrites(vignette, xs[n], ys[n]);
+        error |= vignette->overwrites(&small_shape, xs[n], ys[n]);
         if(!error) {
-          small_shape.draw(n, vignette, xs[n], ys[n]);
+          vignette->draw(n, &small_shape, xs[n], ys[n]);
         }
       } else {
-        error |= big_shape.overwrites(vignette, xs[n], ys[n]);
+        error |= vignette->overwrites(&big_shape, xs[n], ys[n]);
         if(!error) {
-          big_shape.draw(n, vignette, xs[n], ys[n]);
+          vignette->draw(n, &big_shape, xs[n], ys[n]);
         }
       }
       vignette->fill(xs[n], ys[n], 128);

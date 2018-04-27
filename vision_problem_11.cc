@@ -69,10 +69,10 @@ void VisionProblem_11::generate(int label, Vignette *vignette) {
           nb_attempts++;
 
         } while(nb_attempts < max_nb_attempts &&
-                shape.overwrites(&tmp, xs, ys));
+                tmp.overwrites(&shape, xs, ys));
 
         if(nb_attempts < max_nb_attempts) {
-          shape.draw(s, &tmp, xs, ys);
+          tmp.draw(s, &shape, xs, ys);
           tmp.fill(xs, ys, 128);
           i = tmp.intersection(&mask);
         }
@@ -83,7 +83,7 @@ void VisionProblem_11::generate(int label, Vignette *vignette) {
               ((label == 0 && i > 0) || (label == 1 && (i < 1 || i > 4))));
 
       if(nb_attempts < max_nb_attempts) {
-        shape.draw(s, vignette, xs, ys);
+        vignette->draw(s, &shape, xs, ys);
         pxs = xs; pys = ys;
 
         if(label == 0) {

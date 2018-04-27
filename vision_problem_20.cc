@@ -46,9 +46,9 @@ void VisionProblem_20::generate(int label, Vignette *vignette) {
         shapes[n].copy(&shapes[0]);
         shapes[n].symmetrize(ys[n] - ys[0], - xs[n] + xs[0]);
       }
-      error |= shapes[n].overwrites(vignette, xs[n], ys[n]);
+      error |= vignette->overwrites(&shapes[n], xs[n], ys[n]);
       if(!error) {
-        shapes[n].draw(n, vignette, xs[n], ys[n]);
+        vignette->draw(n, &shapes[n], xs[n], ys[n]);
       }
     }
   }  while(error);
