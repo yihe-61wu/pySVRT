@@ -54,7 +54,8 @@ void VisionProblem_13::generate(int label, Vignette *vignette) {
               vignette->overwrites(&big_shape, big_xs1, big_ys1));
 
       if(nb_attempts < max_nb_attempts) {
-        vignette->draw(0, &big_shape, big_xs1, big_ys1);
+        vignette->store_and_draw(0, &big_shape, big_xs1, big_ys1, 0,
+                                 0, big_part_size / 2, 0);
         tmp.draw(0, &big_shape, big_xs1, big_ys1);
         for(int k = 0; k < dist_min; k++) tmp.grow();
       }
@@ -69,7 +70,8 @@ void VisionProblem_13::generate(int label, Vignette *vignette) {
                vignette->overwrites(&small_shape, small_xs1, small_ys1)));
 
       if(nb_attempts < max_nb_attempts) {
-        vignette->draw(1, &small_shape, small_xs1, small_ys1);
+        vignette->store_and_draw(1, &small_shape, small_xs1, small_ys1, 1,
+                                 0, small_part_size / 2, 0);
       }
 
       tmp.clear();
@@ -80,7 +82,8 @@ void VisionProblem_13::generate(int label, Vignette *vignette) {
       } while(nb_attempts < max_nb_attempts &&
               vignette->overwrites(&big_shape, big_xs2, big_ys2));
       if(nb_attempts < max_nb_attempts) {
-        vignette->draw(2, &big_shape, big_xs2, big_ys2);
+        vignette->store_and_draw(2, &big_shape, big_xs2, big_ys2, 0,
+                                 0, big_part_size / 2, 0);
         tmp.draw(0, &big_shape, big_xs2, big_ys2);
         for(int k = 0; k < dist_min; k++) tmp.grow();
 
@@ -106,5 +109,6 @@ void VisionProblem_13::generate(int label, Vignette *vignette) {
                vignette->overwrites(&small_shape, small_xs2, small_ys2)));
     }
   } while(nb_attempts >= max_nb_attempts);
-  vignette->draw(3, &small_shape, small_xs2, small_ys2);
+  vignette->store_and_draw(3, &small_shape, small_xs2, small_ys2, 1,
+                           0, small_part_size / 2, 0);
 }

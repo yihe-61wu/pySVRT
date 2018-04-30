@@ -35,9 +35,12 @@ void VisionProblem_7::generate(int label, Vignette *vignette) {
   vignette->clear();
   Shape shape;
 
+  int shapeness = -1;
+
   for(int s = 0; s < nb_shapes; s++) {
     if((label == 0 && s%2 == 0) || (label == 1 && s%3 == 0)) {
       shape.randomize(part_size, part_hole_size);
+      shapeness++;
     }
 
     int xs, ys;
@@ -45,6 +48,7 @@ void VisionProblem_7::generate(int label, Vignette *vignette) {
       xs = int(random_uniform_0_1() * Vignette::width);
       ys = int(random_uniform_0_1() * Vignette::height);
     } while(vignette->overwrites(&shape, xs, ys));
-    vignette->draw(s, &shape, xs, ys);
+    vignette->store_and_draw(s, &shape, xs, ys, shapeness,
+                             0, part_size, 0);
   }
 }

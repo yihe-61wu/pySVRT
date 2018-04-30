@@ -30,6 +30,7 @@ VisionProblem_1::VisionProblem_1() { }
 void VisionProblem_1::generate(int label, Vignette *vignette) {
   int nb_shapes = 2;
   int xs[nb_shapes], ys[nb_shapes];
+  int shapeness[nb_shapes];
   scalar_t scales[nb_shapes], angles[nb_shapes];
   Shape shapes[nb_shapes];
 
@@ -52,8 +53,10 @@ void VisionProblem_1::generate(int label, Vignette *vignette) {
     for(int n = 0; n < nb_shapes; n++) {
       if(n == 0 || label == 0) {
         shapes[n].randomize(max_scale * part_size / 2, max_scale * hole_size/2);
+        shapeness[n] = n;
       } else {
         shapes[n].copy(&shapes[0]);
+        shapeness[n] = 0;
       }
     }
 
@@ -68,7 +71,8 @@ void VisionProblem_1::generate(int label, Vignette *vignette) {
     for(int n = 0; n < nb_shapes; n++) {
       error |= vignette->overwrites(&shapes[n], xs[n], ys[n]);
       if(!error) {
-        vignette->draw(n, &shapes[n], xs[n], ys[n]);
+        vignette->store_and_draw(n, &shapes[n], xs[n], ys[n], shapeness[n],
+                                 angles[n], scales[n] * part_size, 0);
       }
     }
   } while(error);

@@ -31,6 +31,7 @@ void VisionProblem_12::generate(int label, Vignette *vignette) {
   int nb_shapes = 3;
   scalar_t alpha, beta, gamma;
   int xs, ys;
+  int scale;
   Shape shape;
 
   int error;
@@ -64,9 +65,11 @@ void VisionProblem_12::generate(int label, Vignette *vignette) {
       }
 
       if(n < 2) {
-        shape.randomize(small_part_size, small_part_hole_size);
+        scale = small_part_size;
+        shape.randomize(scale, small_part_hole_size);
       } else {
-        shape.randomize(big_part_size, big_part_hole_size);
+        scale = big_part_size;
+        shape.randomize(scale, big_part_hole_size);
       }
 
       xs = int(xc + radius * cos(gamma));
@@ -74,7 +77,8 @@ void VisionProblem_12::generate(int label, Vignette *vignette) {
 
       error |= vignette->overwrites(&shape, xs, ys);
       if(!error) {
-        vignette->draw(n, &shape, xs, ys);
+        vignette->store_and_draw(n, &shape, xs, ys, n,
+                                 0, scale, 0);
       }
     }
   } while(error);
