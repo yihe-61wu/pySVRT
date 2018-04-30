@@ -25,6 +25,8 @@
 
 #include <TH/TH.h>
 
+#include "svrt.h"
+
 #include "svrt_generator.h"
 
 THByteStorage *compress(THByteStorage *x) {
@@ -90,13 +92,17 @@ void seed(long s) {
   srand48(s);
 }
 
-THByteTensor *generate_vignettes(long n_problem, THLongTensor *labels) {
+THByteTensor *generate_vignettes(
+      long n_problem, THLongTensor *labels,
+      THByteTensor *nb_shapes, THFloatTensor *shape_list) {
   struct VignetteSet vs;
   long nb_vignettes;
   long st0, st1, st2;
   long v, i, j;
   long *m, *l;
   unsigned char *a, *b;
+  int max_shapes = 8;
+  int nb_symbolic_outputs = 6;
 
   if(THLongTensor_nDimension(labels) != 1) {
     printf("Label tensor has to be of dimension 1.\n");
@@ -136,6 +142,38 @@ THByteTensor *generate_vignettes(long n_problem, THLongTensor *labels) {
         *b = (unsigned char) (*r);
         r++;
         b += st2;
+      }
+    }
+  }
+
+  // alloc tensor
+  THByteTensor_resize1d(nb_shapes, vs.nb_vignettes);
+  unsigned char *out_pointer_nb_shapes = THByteTensor_data(nb_shapes);
+  // convert tensor data
+  for (i=0; i<vs.nb_vignettes; i++) {
+    *out_pointer_nb_shapes++ = (unsigned char) vs.nb_shapes_each[i];
+  }
+
+  // alloc tensor
+  THFloatTensor_resize3d(shape_list, vs.nb_vignettes, max_shapes, nb_symbolic_outputs);
+
+  st0 = THFloatTensor_stride(shape_list, 0);
+  st1 = THFloatTensor_stride(shape_list, 1);
+  st2 = THFloatTensor_stride(shape_list, 2);
+
+  //unsigned char *out_pointer_shape_list = THByteTensor_data(shape_list);
+  // convert tensor data
+  float *in_pointer_shape_list = vs.shapes_symb_output;
+  float *out_pointer_shape_list_base, *out_pointer_shape_list;
+  for(v = 0; v < vs.nb_vignettes; v++) {
+    out_pointer_shape_list_base = THFloatTensor_storage(shape_list)->data
+        + THFloatTensor_storageOffset(shape_list) + v * st0;
+    for(i = 0; i < vs.max_shapes; i++) {
+      out_pointer_shape_list = out_pointer_shape_list_base + i * st1;
+      for(j = 0; j < vs.nb_symbolic_outputs; j++) {
+        *out_pointer_shape_list = (float) (*in_pointer_shape_list);
+        in_pointer_shape_list++;
+        out_pointer_shape_list += st2;
       }
     }
   }
