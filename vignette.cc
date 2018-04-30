@@ -176,3 +176,27 @@ void Vignette::draw(int part_number, Shape *shape, scalar_t xc, scalar_t yc) {
   draw(part_number, shape, xc, yc, shape->n_pixels3, shape->n_pixels4);
   draw(part_number, shape, xc, yc, shape->n_pixels4, shape->nb_pixels);
 }
+
+void Vignette::store_and_draw(
+      int part_number,
+      Shape *shape,
+      scalar_t xc,
+      scalar_t yc,
+      int shapeness,
+      float rot,
+      float scale,
+      int is_mirrored) {
+  // x, y, shape_id, scale, rotation, is_mirrored
+  int offset = nb_symbolic_outputs * nb_shapes;
+  shapes_symb_output[offset + 0] = (float) xc;
+  shapes_symb_output[offset + 1] = (float) yc;
+  shapes_symb_output[offset + 2] = (float) shapeness;
+  shapes_symb_output[offset + 3] = (float) rot;
+  shapes_symb_output[offset + 4] = (float) scale;
+  shapes_symb_output[offset + 5] = (float) is_mirrored;
+  shapes[nb_shapes] = shape;
+  shapes_xs[nb_shapes] = xc;
+  shapes_ys[nb_shapes] = yc;
+  draw(part_number, shape, xc, yc);
+  nb_shapes++;
+}
