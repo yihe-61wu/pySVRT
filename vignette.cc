@@ -194,9 +194,13 @@ void Vignette::store_and_draw(
   shapes_symb_output[offset + 3] = (float) rot;
   shapes_symb_output[offset + 4] = (float) scale;
   shapes_symb_output[offset + 5] = (float) is_mirrored;
-  shapes[nb_shapes] = shape;
+  // Create a new shape so we know it won't get overwritten.
+  Shape _shape_copy;
+  _shape_copy.copy(shape);
+  shapes[nb_shapes] = &_shape_copy;
   shapes_xs[nb_shapes] = xc;
   shapes_ys[nb_shapes] = yc;
+  // Draw the shape
   draw(part_number, shape, xc, yc);
   nb_shapes++;
 }
