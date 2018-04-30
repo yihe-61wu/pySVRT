@@ -42,7 +42,7 @@ void VisionProblem_1::generate(int label, Vignette *vignette) {
       xs[n] = int(random_uniform_0_1() * Vignette::width);
       ys[n] = int(random_uniform_0_1() * Vignette::height);
 
-        scales[n] = 2.5;
+      scales[n] = 2.5;
 
       if(n == 0 || scales[n] > max_scale) max_scale = scales[n];
 
