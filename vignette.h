@@ -38,11 +38,22 @@ public:
   static const int width = 128;
   static const int height = width;
   static const int nb_grayscales = 256;
+  static const int max_shapes = 8;
+  static const int nb_symbolic_outputs = 6;  // x, y, shape_id, scale, rotation, is_mirrored
 
   int content[width * height];
 #ifdef KEEP_PART_PRESENCE
   unsigned int part_presence[width * height];
 #endif
+
+  int nb_shapes;
+  Shape *shapes[max_shapes];
+  int shapes_xs[max_shapes];
+  int shapes_ys[max_shapes];
+
+  float shapes_symb_output[max_shapes * nb_symbolic_outputs];
+  uint shape_is_bordering[max_shapes * max_shapes];
+  uint shape_is_containing[max_shapes * max_shapes];
 
   void clear();
 

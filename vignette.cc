@@ -31,6 +31,14 @@ void Vignette::clear() {
     part_presence[k] = 0;
 #endif
   }
+  nb_shapes = 0;
+  for(int i = 0; i < max_shapes * nb_symbolic_outputs; i++) {
+    shapes_symb_output[i] = -1.0;
+  }
+  for(int i = 0; i < max_shapes * max_shapes; i++) {
+    shape_is_bordering[i] = 0;
+    shape_is_containing[i] = 0;
+  }
 }
 
 void Vignette::fill(int x, int y, int v) {
