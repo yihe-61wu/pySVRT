@@ -57,8 +57,8 @@ public:
   int nb_pixels;
   int n_pixels1, n_pixels2, n_pixels3, n_pixels4;
   scalar_t xc, yc;
-  scalar_t *x_pixels;
-  scalar_t *y_pixels;
+  scalar_t x_pixels[nb_max_pixels];
+  scalar_t y_pixels[nb_max_pixels];
 
   Shape();
   ~Shape();

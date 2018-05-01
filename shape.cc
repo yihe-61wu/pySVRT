@@ -369,23 +369,23 @@ void Shape::generate_zigzag(scalar_t *xp, scalar_t *yp, int *nb_pixels,
 
 Shape::Shape() {
   nb_pixels = 0;
-  x_pixels = 0;
-  y_pixels = 0;
+  //scalar_t x_pixels[nb_max_pixels];
+  //scalar_t y_pixels[nb_max_pixels];
 }
 
 Shape::~Shape() {
-  delete[] x_pixels;
-  delete[] y_pixels;
+  //delete[] x_pixels;
+  //delete[] y_pixels;
 }
 
 void Shape::randomize(scalar_t radius, scalar_t hole_radius) {
-  delete[] x_pixels;
-  delete[] y_pixels;
+  //delete[] x_pixels;
+  //delete[] y_pixels;
   nb_pixels = 0;
   scalar_t tmp_x_pixels[nb_max_pixels], tmp_y_pixels[nb_max_pixels];
   generate_part(tmp_x_pixels, tmp_y_pixels, &nb_pixels, radius, hole_radius);
-  x_pixels = new scalar_t[nb_pixels];
-  y_pixels = new scalar_t[nb_pixels];
+  //scalar_t x_pixels[nb_max_pixels];
+  //scalar_t y_pixels[nb_max_pixels];
   for(int p = 0; p < nb_pixels; p++) {
     x_pixels[p] = tmp_x_pixels[p];
     y_pixels[p] = tmp_y_pixels[p];
@@ -403,8 +403,8 @@ void Shape::randomize(scalar_t radius, scalar_t hole_radius) {
 }
 
 void Shape::randomize_by_type(scalar_t radius, scalar_t hole_radius, int type) {
-  delete[] x_pixels;
-  delete[] y_pixels;
+  //delete[] x_pixels;
+  //delete[] y_pixels;
   nb_pixels = 0;
   scalar_t tmp_x_pixels[nb_max_pixels], tmp_y_pixels[nb_max_pixels];
 
@@ -437,8 +437,8 @@ void Shape::randomize_by_type(scalar_t radius, scalar_t hole_radius, int type) {
     abort();
   }
 
-  x_pixels = new scalar_t[nb_pixels];
-  y_pixels = new scalar_t[nb_pixels];
+  //scalar_t x_pixels[nb_max_pixels];
+  //scalar_t y_pixels[nb_max_pixels];
   for(int p = 0; p < nb_pixels; p++) {
     x_pixels[p] = tmp_x_pixels[p];
     y_pixels[p] = tmp_y_pixels[p];
@@ -455,15 +455,15 @@ void Shape::randomize_random_type(scalar_t radius, scalar_t hole_radius) {
 }
 
 void Shape::copy(Shape *shape) {
-  delete[] x_pixels;
-  delete[] y_pixels;
+  //delete[] x_pixels;
+  //delete[] y_pixels;
   nb_pixels = shape->nb_pixels;
   n_pixels1 = shape->n_pixels1;
   n_pixels2 = shape->n_pixels2;
   n_pixels3 = shape->n_pixels3;
   n_pixels4 = shape->n_pixels4;
-  x_pixels = new scalar_t[nb_pixels];
-  y_pixels = new scalar_t[nb_pixels];
+  //scalar_t x_pixels[nb_max_pixels];
+  //scalar_t y_pixels[nb_max_pixels];
   for(int p = 0; p < nb_pixels; p++) {
     x_pixels[p] = shape->x_pixels[p];
     y_pixels[p] = shape->y_pixels[p];
