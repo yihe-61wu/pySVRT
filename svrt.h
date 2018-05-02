@@ -29,7 +29,7 @@ THByteStorage *uncompress(THByteStorage *x);
 
 void seed(long s);
 
-THByteTensor *generate_vignettes(
+THByteTensor *generate_vignettes_raw(
   long n_problem,
   THLongTensor *labels,
   THByteTensor *nb_shapes,

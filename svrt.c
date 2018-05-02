@@ -92,7 +92,7 @@ void seed(long s) {
   srand48(s);
 }
 
-THByteTensor *generate_vignettes(
+THByteTensor *generate_vignettes_raw(
       long n_problem, THLongTensor *labels,
       THByteTensor *nb_shapes, THFloatTensor *shape_list,
       THFloatTensor *is_bordering, THFloatTensor *is_containing) {
