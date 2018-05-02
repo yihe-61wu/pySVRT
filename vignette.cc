@@ -263,5 +263,46 @@ void Vignette::check_bordering() {
   }
 }
 
+float check_within(int *mask, int *content) {
+  bool all_within = true;
+  bool any_within = false;
+  for(int x; x < Vignette::width * Vignette::height; x++) {
+    if(mask[x] < 255 && content[x] < 255) {
+      any_within = true;
+    }
+    if(content[x] < 255 && mask[x] >= 255) {
+      all_within = false;
+    }
+  }
+  float output = -2;
+  if (any_within && all_within) {
+    // This means all of content was on top of the mask
+    output = 1;
+  } else if (!any_within && all_within) {
+    // This means that content is completely white
+    output = -1;
+  } else if (any_within && !all_within) {
+    // This means the two intersect, but content is not all on the mask
+    output = 0.5;
+  } else if (!any_within && !all_within) {
+    // This means the content is all outside the mask
+    output = 0;
+  }
+  return output;
+}
+
 void Vignette::check_containing() {
+  Vignette mask;
+  for(int n = 0; n < nb_shapes; n++) {
+    mask.clear();
+    extract_part(n, mask.content);
+    mask.fill(shapes_xs[n], shapes_ys[n], 128);
+    for(int i = 0; i < nb_shapes; i++) {
+      int second_shape_content[width * height];
+      extract_part(i, second_shape_content);
+      shape_is_containing[n * max_shapes + i] = check_within(
+        mask.content,
+        second_shape_content);
+    }
+  }
 }
