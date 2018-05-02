@@ -37,8 +37,8 @@ struct VignetteSet {
   int nb_symbolic_outputs;
   unsigned char *nb_shapes_each;
   float *shapes_symb_output;
-  uint *shape_is_bordering;
-  uint *shape_is_containing;
+  float *shape_is_bordering;
+  float *shape_is_containing;
 };
 
   void svrt_generate_vignettes(int n_problem, int nb_vignettes, long *labels,

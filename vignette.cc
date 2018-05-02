@@ -36,8 +36,8 @@ void Vignette::clear() {
     shapes_symb_output[i] = -1.0;
   }
   for(int i = 0; i < max_shapes * max_shapes; i++) {
-    shape_is_bordering[i] = 0;
-    shape_is_containing[i] = 0;
+    shape_is_bordering[i] = -1.0;
+    shape_is_containing[i] = -1.0;
   }
 }
 
