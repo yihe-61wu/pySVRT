@@ -197,7 +197,7 @@ void Vignette::store_and_draw(
   // Create a new shape so we know it won't get overwritten.
   Shape _shape_copy;
   _shape_copy.copy(shape);
-  shapes[nb_shapes] = &_shape_copy;
+  shapes.push_back(_shape_copy);
   shapes_xs[nb_shapes] = xc;
   shapes_ys[nb_shapes] = yc;
   // Draw the shape
