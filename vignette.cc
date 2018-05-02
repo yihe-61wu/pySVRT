@@ -206,6 +206,49 @@ void Vignette::store_and_draw(
 }
 
 void Vignette::check_bordering() {
+  Vignette mask_0;
+  Vignette mask_1;
+  Vignette mask_2;
+  Vignette mask_3;
+  for(int n = 0; n < nb_shapes; n++) {
+    mask_0.clear();
+    mask_1.clear();
+    mask_2.clear();
+    mask_3.clear();
+    mask_0.draw(0, &shapes[n], shapes_xs[n], shapes_ys[n]);
+    mask_1.draw(0, &shapes[n], shapes_xs[n], shapes_ys[n]);
+    mask_2.draw(0, &shapes[n], shapes_xs[n], shapes_ys[n]);
+    mask_3.draw(0, &shapes[n], shapes_xs[n], shapes_ys[n]);
+    // For mask 0, we leave as is and just check for intersection
+    // For mask 1, we grow once and check for immediate adjacency
+    mask_1.grow();
+    // For mask 2, we grow to check for neighbouring within 10 pixels
+    // (c.f. problem 11)
+    for(int k = 0; k < Vignette::width / 12; k++) {
+      mask_2.grow();
+    }
+    // For mask 3, we grow to check for neighbouring within 16 pixels
+    // (c.f. problems 2 and 3)
+    for(int k = 0; k < Vignette::width / 8; k++) {
+      mask_3.grow();
+    }
+    for(int i = 0; i < nb_shapes; i++) {
+      float output = 0;
+      if(mask_0.overwrites(&shapes[i], shapes_xs[i], shapes_ys[i])) {
+        output += 0.25;
+      }
+      if(mask_1.overwrites(&shapes[i], shapes_xs[i], shapes_ys[i])) {
+        output += 0.25;
+      }
+      if(mask_2.overwrites(&shapes[i], shapes_xs[i], shapes_ys[i])) {
+        output += 0.25;
+      }
+      if(mask_3.overwrites(&shapes[i], shapes_xs[i], shapes_ys[i])) {
+        output += 0.25;
+      }
+      shape_is_bordering[n * max_shapes + i] = output;
+    }
+  }
 }
 
 void Vignette::check_containing() {
