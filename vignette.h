@@ -64,6 +64,7 @@ public:
   void superpose(Vignette *infront, Vignette *inback);
   int intersection(Vignette *v);
   void grow();
+  void extract_part(int part_id, int *output);
 
   int overwrites(Shape *shape, scalar_t xc, scalar_t yc);
   void draw(int part_number, Shape *shape, scalar_t xc, scalar_t yc);

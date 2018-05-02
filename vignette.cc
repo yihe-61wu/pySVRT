@@ -106,6 +106,13 @@ void Vignette::grow() {
   }
 }
 
+void Vignette::extract_part(int part_id, int *output) {
+  for(int x; x < Vignette::width * Vignette::height; x++) {
+    output[x] = (part_presence[x] & (1 << part_id)) ? 0 : 255;
+    if(output[x] == 0) {
+    }
+  }
+}
 
 int Vignette::overwrites(Shape *shape, scalar_t xc, scalar_t yc,
                          int n1, int n2) {
@@ -207,18 +214,12 @@ void Vignette::store_and_draw(
 
 void Vignette::check_bordering() {
   Vignette mask_0;
-  Vignette mask_1;
-  Vignette mask_2;
-  Vignette mask_3;
   for(int n = 0; n < nb_shapes; n++) {
     mask_0.clear();
-    mask_1.clear();
-    mask_2.clear();
-    mask_3.clear();
-    mask_0.draw(0, &shapes[n], shapes_xs[n], shapes_ys[n]);
-    mask_1.draw(0, &shapes[n], shapes_xs[n], shapes_ys[n]);
-    mask_2.draw(0, &shapes[n], shapes_xs[n], shapes_ys[n]);
-    mask_3.draw(0, &shapes[n], shapes_xs[n], shapes_ys[n]);
+    extract_part(n, mask_0.content);
+    Vignette mask_1 = mask_0;
+    Vignette mask_2 = mask_0;
+    Vignette mask_3 = mask_0;
     // For mask 0, we leave as is and just check for intersection
     // For mask 1, we grow once and check for immediate adjacency
     mask_1.grow();
