@@ -48,8 +48,8 @@ public:
 
   int nb_shapes;
   Shape *shapes[max_shapes];
-  int shapes_xs[max_shapes];
-  int shapes_ys[max_shapes];
+  scalar_t shapes_xs[max_shapes];
+  scalar_t shapes_ys[max_shapes];
 
   float shapes_symb_output[max_shapes * nb_symbolic_outputs];
   float shape_is_bordering[max_shapes * max_shapes];
