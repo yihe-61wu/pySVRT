@@ -163,7 +163,6 @@ THByteTensor *generate_vignettes(
   st1 = THFloatTensor_stride(shape_list, 1);
   st2 = THFloatTensor_stride(shape_list, 2);
 
-  //unsigned char *out_pointer_shape_list = THByteTensor_data(shape_list);
   // convert tensor data
   float *in_pointer_shape_list = vs.shapes_symb_output;
   float *out_pointer_shape_list_base, *out_pointer_shape_list;
