@@ -146,6 +146,7 @@ THByteTensor *generate_vignettes(
     }
   }
 
+
   // alloc tensor
   THByteTensor_resize1d(nb_shapes, vs.nb_vignettes);
   unsigned char *out_pointer_nb_shapes = THByteTensor_data(nb_shapes);
@@ -153,6 +154,7 @@ THByteTensor *generate_vignettes(
   for (i=0; i<vs.nb_vignettes; i++) {
     *out_pointer_nb_shapes++ = (unsigned char) vs.nb_shapes_each[i];
   }
+
 
   // alloc tensor
   THFloatTensor_resize3d(shape_list, vs.nb_vignettes, max_shapes, nb_symbolic_outputs);
