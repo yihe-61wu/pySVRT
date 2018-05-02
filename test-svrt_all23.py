@@ -43,7 +43,7 @@ labels.narrow(0, 0, labels.size(0)//2).fill_(1)
 if not os.path.exists('examples'):
     os.makedirs('examples')
 
-for problem in (range(1, 24) + [51, 151, 52, 152] + [101, 201, 301, 401, 501, 601, 901]):
+for problem in (list(range(1, 24)) + [51, 151, 52, 152] + [101, 201, 301, 401, 501, 601, 901]):
 
     x = svrt.generate_vignettes(problem, labels)
 
