@@ -25,7 +25,6 @@
 #ifndef VIGNETTE_H
 #define VIGNETTE_H
 
-#include <vector>
 #include "misc.h"
 #include "shape.h"
 
@@ -48,7 +47,6 @@ public:
 #endif
 
   int nb_shapes;
-  std::vector<Shape> shapes;
   scalar_t shapes_xs[max_shapes];
   scalar_t shapes_ys[max_shapes];
 
