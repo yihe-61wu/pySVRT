@@ -33,5 +33,7 @@ THByteTensor *generate_vignettes(
   long n_problem,
   THLongTensor *labels,
   THByteTensor *nb_shapes,
-  THFloatTensor *shape_list
+  THFloatTensor *shape_list,
+  THFloatTensor *is_bordering,
+  THFloatTensor *is_containing
   );

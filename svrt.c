@@ -94,7 +94,8 @@ void seed(long s) {
 
 THByteTensor *generate_vignettes(
       long n_problem, THLongTensor *labels,
-      THByteTensor *nb_shapes, THFloatTensor *shape_list) {
+      THByteTensor *nb_shapes, THFloatTensor *shape_list,
+      THFloatTensor *is_bordering, THFloatTensor *is_containing) {
   struct VignetteSet vs;
   long nb_vignettes;
   long st0, st1, st2;
@@ -175,6 +176,39 @@ THByteTensor *generate_vignettes(
         *out_pointer_shape_list = (float) (*in_pointer_shape_list);
         in_pointer_shape_list++;
         out_pointer_shape_list += st2;
+      }
+    }
+  }
+
+
+  // alloc tensor
+  THFloatTensor_resize3d(is_bordering, vs.nb_vignettes, max_shapes, max_shapes);
+  THFloatTensor_resize3d(is_containing, vs.nb_vignettes, max_shapes, max_shapes);
+
+  st0 = THFloatTensor_stride(is_bordering, 0);
+  st1 = THFloatTensor_stride(is_bordering, 1);
+  st2 = THFloatTensor_stride(is_bordering, 2);
+
+  // convert tensor data
+  float *in_pointer_shape_is_bordering = vs.shape_is_bordering;
+  float *in_pointer_shape_is_containing = vs.shape_is_containing;
+  float *out_pointer_shape_is_bordering_base, *out_pointer_shape_is_bordering;
+  float *out_pointer_shape_is_containing_base, *out_pointer_shape_is_containing;
+  for(v = 0; v < vs.nb_vignettes; v++) {
+    out_pointer_shape_is_bordering_base = THFloatTensor_storage(is_bordering)->data
+        + THFloatTensor_storageOffset(is_bordering) + v * st0;
+    out_pointer_shape_is_containing_base = THFloatTensor_storage(is_containing)->data
+        + THFloatTensor_storageOffset(is_containing) + v * st0;
+    for(i = 0; i < vs.max_shapes; i++) {
+      out_pointer_shape_is_bordering = out_pointer_shape_is_bordering_base + i * st1;
+      out_pointer_shape_is_containing = out_pointer_shape_is_containing_base + i * st1;
+      for(j = 0; j < vs.max_shapes; j++) {
+        *out_pointer_shape_is_bordering = (float) (*in_pointer_shape_is_bordering);
+        in_pointer_shape_is_bordering++;
+        out_pointer_shape_is_bordering += st2;
+        *out_pointer_shape_is_containing = (float) (*in_pointer_shape_is_containing);
+        in_pointer_shape_is_containing++;
+        out_pointer_shape_is_containing += st2;
       }
     }
   }
