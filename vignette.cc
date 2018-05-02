@@ -212,6 +212,15 @@ void Vignette::store_and_draw(
   nb_shapes++;
 }
 
+bool any_content_collides(int *content1, int *content2) {
+  for(int x; x < Vignette::width * Vignette::height; x++) {
+    if(content1[x] < 255 && content2[x] < 255) {
+      return true;
+    }
+  }
+  return false;
+}
+
 void Vignette::check_bordering() {
   Vignette mask_0;
   for(int n = 0; n < nb_shapes; n++) {
@@ -235,16 +244,18 @@ void Vignette::check_bordering() {
     }
     for(int i = 0; i < nb_shapes; i++) {
       float output = 0;
-      if(mask_0.overwrites(&shapes[i], shapes_xs[i], shapes_ys[i])) {
+      int second_shape_content[width * height];
+      extract_part(i, second_shape_content);
+      if(any_content_collides(mask_3.content, second_shape_content)) {
         output += 0.25;
       }
-      if(mask_1.overwrites(&shapes[i], shapes_xs[i], shapes_ys[i])) {
+      if(any_content_collides(mask_2.content, second_shape_content)) {
         output += 0.25;
       }
-      if(mask_2.overwrites(&shapes[i], shapes_xs[i], shapes_ys[i])) {
+      if(any_content_collides(mask_1.content, second_shape_content)) {
         output += 0.25;
       }
-      if(mask_3.overwrites(&shapes[i], shapes_xs[i], shapes_ys[i])) {
+      if(any_content_collides(mask_0.content, second_shape_content)) {
         output += 0.25;
       }
       shape_is_bordering[n * max_shapes + i] = output;
