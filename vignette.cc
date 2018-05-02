@@ -204,3 +204,9 @@ void Vignette::store_and_draw(
   draw(part_number, shape, xc, yc);
   nb_shapes++;
 }
+
+void Vignette::check_bordering() {
+}
+
+void Vignette::check_containing() {
+}

@@ -238,6 +238,10 @@ void svrt_generate_vignettes(int n_problem, int nb_vignettes, long *labels,
       exit(1);
     }
 
+    // Parse metadata
+    tmp.check_bordering();
+    tmp.check_containing();
+
     int *r = tmp.content;
     for(int k = 0; k < Vignette::width * Vignette::height; k++) {
       *s++ = *r++;
