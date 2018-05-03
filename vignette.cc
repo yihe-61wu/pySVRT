@@ -109,8 +109,6 @@ void Vignette::grow() {
 void Vignette::extract_part(int part_id, int *output) {
   for(int x; x < Vignette::width * Vignette::height; x++) {
     output[x] = (part_presence[x] & (1 << part_id)) ? 0 : 255;
-    if(output[x] == 0) {
-    }
   }
 }
 
