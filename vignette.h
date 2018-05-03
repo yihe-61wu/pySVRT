@@ -39,7 +39,7 @@ public:
   static const int height = width;
   static const int nb_grayscales = 256;
   static const int max_shapes = 8;
-  static const int nb_symbolic_outputs = 6;  // x, y, shape_id, scale, rotation, is_mirrored
+  static const int nb_symbolic_outputs = 6;  // x, y, shape_id, rotation, scale, is_mirrored
 
   int content[width * height];
 #ifdef KEEP_PART_PRESENCE

@@ -193,7 +193,7 @@ void Vignette::store_and_draw(
       float rot,
       float scale,
       int is_mirrored) {
-  // x, y, shape_id, scale, rotation, is_mirrored
+  // x, y, shape_id, rotation, scale, is_mirrored
   int offset = nb_symbolic_outputs * nb_shapes;
   shapes_symb_output[offset + 0] = (float) xc;
   shapes_symb_output[offset + 1] = (float) yc;
