@@ -220,7 +220,7 @@ void Vignette::check_bordering() {
   Vignette mask_0;
   for(int n = 0; n < nb_shapes; n++) {
     mask_0.clear();
-    extract_part(n, mask_0.content);
+    this->extract_part(n, mask_0.content);
     Vignette mask_1 = mask_0;
     Vignette mask_2 = mask_0;
     Vignette mask_3 = mask_0;
@@ -245,7 +245,7 @@ void Vignette::check_bordering() {
     for(int i = 0; i < nb_shapes; i++) {
       float output = 0;
       int second_shape_content[width * height];
-      extract_part(i, second_shape_content);
+      this->extract_part(i, second_shape_content);
       if(any_content_collides(mask_4.content, second_shape_content)) {
         output += 0.2;
       }
@@ -261,7 +261,7 @@ void Vignette::check_bordering() {
       if(any_content_collides(mask_0.content, second_shape_content)) {
         output += 0.2;
       }
-      shape_is_bordering[n * max_shapes + i] = output;
+      this->shape_is_bordering[n * max_shapes + i] = output;
     }
   }
 }
