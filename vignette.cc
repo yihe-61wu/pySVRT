@@ -226,34 +226,42 @@ void Vignette::check_bordering() {
     Vignette mask_1 = mask_0;
     Vignette mask_2 = mask_0;
     Vignette mask_3 = mask_0;
+    Vignette mask_4 = mask_0;
     // For mask 0, we leave as is and just check for intersection
     // For mask 1, we grow once and check for immediate adjacency
     mask_1.grow();
-    // For mask 2, we grow to check for neighbouring within 10 pixels
-    // (c.f. problem 11)
-    for(int k = 0; k < Vignette::width / 12; k++) {
+    // For mask 2, we grow to check for neighbouring within 5 pixels
+    for(int k = 0; k < Vignette::width / 24; k++) {
       mask_2.grow();
     }
-    // For mask 3, we grow to check for neighbouring within 16 pixels
+    // For mask 3, we grow to check for neighbouring within 10 pixels
+    // (c.f. problem 11)
+    for(int k = 0; k < Vignette::width / 12; k++) {
+      mask_3.grow();
+    }
+    // For mask 4, we grow to check for neighbouring within 16 pixels
     // (c.f. problems 2 and 3)
     for(int k = 0; k < Vignette::width / 8; k++) {
-      mask_3.grow();
+      mask_4.grow();
     }
     for(int i = 0; i < nb_shapes; i++) {
       float output = 0;
       int second_shape_content[width * height];
       extract_part(i, second_shape_content);
+      if(any_content_collides(mask_4.content, second_shape_content)) {
+        output += 0.2;
+      }
       if(any_content_collides(mask_3.content, second_shape_content)) {
-        output += 0.25;
+        output += 0.2;
       }
       if(any_content_collides(mask_2.content, second_shape_content)) {
-        output += 0.25;
+        output += 0.2;
       }
       if(any_content_collides(mask_1.content, second_shape_content)) {
-        output += 0.25;
+        output += 0.2;
       }
       if(any_content_collides(mask_0.content, second_shape_content)) {
-        output += 0.25;
+        output += 0.2;
       }
       shape_is_bordering[n * max_shapes + i] = output;
     }
