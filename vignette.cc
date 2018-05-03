@@ -266,46 +266,47 @@ void Vignette::check_bordering() {
   }
 }
 
-float check_within(int *mask, int *content) {
-  bool all_within = true;
-  bool any_within = false;
-  for(int x; x < Vignette::width * Vignette::height; x++) {
-    if(mask[x] < 255 && content[x] < 255) {
-      any_within = true;
-    }
-    if(content[x] < 255 && mask[x] >= 255) {
-      all_within = false;
-    }
-  }
-  float output = -2;
-  if (any_within && all_within) {
-    // This means all of content was on top of the mask
-    output = 1;
-  } else if (!any_within && all_within) {
-    // This means that content is completely white
-    output = -1;
-  } else if (any_within && !all_within) {
-    // This means the two intersect, but content is not all on the mask
-    output = 0.5;
-  } else if (!any_within && !all_within) {
-    // This means the content is all outside the mask
-    output = 0;
-  }
-  return output;
-}
-
 void Vignette::check_containing() {
-  Vignette mask;
+  bool is_inside;
+  bool is_outside;
+  Vignette mask_grey_in;
   for(int n = 0; n < nb_shapes; n++) {
-    mask.clear();
-    extract_part(n, mask.content);
-    mask.fill(shapes_xs[n], shapes_ys[n], 128);
+    mask_grey_in.clear();
+    this->extract_part(n, mask_grey_in.content);
+    Vignette mask_grey_out = mask_grey_in;
+    // If we fill from the centre of the shape, we'll fill its inside
+    // (more if the filling tool escapes the shape boundaries)
+    mask_grey_in.fill(shapes_xs[n], shapes_ys[n], 128);
+    // If we fill from the corners, we'll definitely fill all the vignette
+    // outside the shape, except in a very extreme edge case with a shape
+    // that is the size of the entire vignette.
+    mask_grey_out.fill(0, 0, 128);
+    mask_grey_out.fill(Vignette::width - 1, 0, 128);
+    mask_grey_out.fill(0, Vignette::height - 1, 128);
+    mask_grey_out.fill(Vignette::width - 1, Vignette::height - 1, 128);
     for(int i = 0; i < nb_shapes; i++) {
       int second_shape_content[width * height];
-      extract_part(i, second_shape_content);
-      shape_is_containing[n * max_shapes + i] = check_within(
-        mask.content,
-        second_shape_content);
+      this->extract_part(i, second_shape_content);
+      is_inside = !any_content_collides(mask_grey_out.content,
+                                        second_shape_content);
+      is_outside = !any_content_collides(mask_grey_in.content,
+                                         second_shape_content);
+      float output = -1.0;
+      if(is_inside && is_outside) {
+        // This means the second shape is nowhere
+        output = -0.5;
+      } else if(is_inside && !is_outside) {
+        // This means the shape is genuinely inside
+        output = 1.0;
+      } else if(!is_inside && is_outside) {
+        // This means the shape is genuinely outside
+        output = 0.0;
+      } else if(!is_inside && !is_outside) {
+        // This means the shapes intersect, or shape n does not form a
+        // closed loop
+        output = 0.5;
+      }
+      this->shape_is_containing[n * max_shapes + i] = output;
     }
   }
 }
