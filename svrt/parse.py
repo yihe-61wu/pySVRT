@@ -2,6 +2,7 @@
 Parsing symbolic output
 """
 
+import math
 
 def parse_vignette_to_string(nb_shapes, shape_list, is_bordering,
                              is_containing):
@@ -29,6 +30,7 @@ def parse_vignette_to_string(nb_shapes, shape_list, is_bordering,
     # First, parse each shape
     shape_reps = []
     for i_shape in range(nb_shapes):
+        shape_list[i_shape][3] %= 2 * math.pi
         this_shape_str = "Shape({:.0f},{:.0f},{:.0f},{:f},{:f},{:.0f})".format(
             *shape_list[i_shape])
         shape_reps.append(this_shape_str)
