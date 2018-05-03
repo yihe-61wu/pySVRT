@@ -39,18 +39,20 @@ void VisionProblem_20::generate(int label, Vignette *vignette) {
   do{
     vignette->clear();
     error = 0;
+    int shapeness_tracker = -1;
     for(int n = 0; !error && n < nb_shapes; n++) {
       xs[n] = int(random_uniform_0_1() * Vignette::width);
       ys[n] = int(random_uniform_0_1() * Vignette::height);
       if(!label || n == 0) {
         shapes[n].randomize(part_size / 2, part_hole_size / 2);
-        shapeness[n] = 0;
+        shapeness_tracker++;
+        shapeness[n] = shapeness_tracker;
         mirroredness[n] = 0;
         angles[n] = 0;
       } else {
         shapes[n].copy(&shapes[0]);
         shapes[n].symmetrize(ys[n] - ys[0], - xs[n] + xs[0]);
-        shapeness[n] = 0;
+        shapeness[n] = shapeness_tracker;
         // Deconstruct the reflection into a horizontal reflection, followed
         // by a rotation
         mirroredness[n] = 1;

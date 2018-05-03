@@ -62,7 +62,7 @@ void VisionProblem_11::generate(int label, Vignette *vignette) {
           } else {
             scale = small_part_size / 2;
             shape.randomize(scale, small_part_hole_size / 2);
-            shapeness++;
+            shapeness = 1;
           }
 
           if(nb_shapes == 2 || s == 0 || label == 0) {
