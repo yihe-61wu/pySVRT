@@ -72,6 +72,11 @@ parser.add_argument('--parsed_dir',
                     default = '',
                     help='Where to put parsed output strings')
 
+parser.add_argument('--parsed_dir_classic',
+                    type = str,
+                    default = '',
+                    help='Where to put classic-style parsed output strings')
+
 ######################################################################
 
 args = parser.parse_args()
@@ -91,6 +96,8 @@ else:
 
 if args.parsed_dir:
     os.makedirs(args.parsed_dir, exist_ok = True)
+if args.parsed_dir_classic:
+    os.makedirs(args.parsed_dir_classic, exist_ok = True)
 
 for n in range(0, args.nb_samples, args.batch_size):
     print(n, '/', args.nb_samples)
@@ -103,11 +110,18 @@ for n in range(0, args.nb_samples, args.batch_size):
     for k in range(x.size(0)):
         filename = args.data_dir + '/problem_{:02d}/class_{:d}/img_{:07d}.png'.format(args.problem, labels[k], k + n)
         torchvision.utils.save_image(x[k].view(1, x.size(1), x.size(2)), filename)
+        # Output parsed strings in classic sasquatch style
+        if args.parsed_dir_classic:
+            parsed_str = svrt.parse.parse_vignette_to_string_classic(
+                nb_shapes[k], shape_list[k], is_bordering[k], is_containing[k])
+
+            fname = "{:d}_{:d}_{:d}".format(args.problem, labels[k], k + n)
+            with open(os.path.join(args.parsed_dir_classic, fname), "w") as f:
+                f.write(parsed_str)
+        # Output parsed strings in updated style, with rotation and reflection
         if args.parsed_dir:
-            parsed_str = svrt.parse.parse_vignette_to_string(nb_shapes[k],
-                                                             shape_list[k],
-                                                             is_bordering[k],
-                                                             is_containing[k])
+            parsed_str = svrt.parse.parse_vignette_to_string(
+                nb_shapes[k], shape_list[k], is_bordering[k], is_containing[k])
 
             fname = "{:d}_{:d}_{:d}".format(args.problem, labels[k], k + n)
             with open(os.path.join(args.parsed_dir, fname), "w") as f:
