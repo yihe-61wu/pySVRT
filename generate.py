@@ -37,6 +37,7 @@ from torchvision import datasets, transforms, utils
 
 import svrt
 import svrt.parse
+import svrt.utils
 
 ######################################################################
 # Parsing arguments
@@ -105,6 +106,10 @@ for n in range(0, args.nb_samples, args.batch_size):
     labels.narrow(0, 0, labels.size(0)//2).fill_(1)
     x, nb_shapes, shape_list, is_bordering, is_containing = \
         svrt.generate_vignettes_full(args.problem, labels)
+    # Obfuscate shape construction order, and rotation/reflection state
+    nb_shapes, shape_list, is_bordering, is_containing = \
+        svrt.utils.obfuscate_shape_construction(
+            nb_shapes, shape_list, is_bordering, is_containing)
     x = x.float()
     x.sub_(128).div_(64)
     for k in range(x.size(0)):
