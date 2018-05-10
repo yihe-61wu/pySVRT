@@ -42,7 +42,7 @@ def parse_vignette_to_string_classic(
     out = ','.join(shape_reps)
     out += "\n"
 
-    # Next, parse which shapes are contain each other
+    # Next, parse which shapes contain each other
     for i in range(nb_shapes):
         for j in range(nb_shapes):
             if i == j:
@@ -94,7 +94,7 @@ def parse_vignette_to_string(nb_shapes, shape_list, is_bordering,
     out = ','.join(shape_reps)
     out += "\n"
 
-    # Next, parse which shapes are contain each other
+    # Next, parse which shapes contain each other
     for i in range(nb_shapes):
         for j in range(nb_shapes):
             if i == j:
