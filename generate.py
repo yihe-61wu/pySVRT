@@ -94,9 +94,11 @@ if not os.path.isdir(args.data_dir):
         FileNotFoundError = IOError
     raise FileNotFoundError('Cannot find ' + args.data_dir)
 
-name = 'problem_{:02d}/class_'.format(args.problem)
-os.makedirs(args.data_dir + '/' + name + '0', exist_ok = True)
-os.makedirs(args.data_dir + '/' + name + '1', exist_ok = True)
+for class_label in [0, 1]:
+    dirname = 'problem_{:02d}/class_{:d}'.format(args.problem, class_label)
+    dirname = os.path.join(args.data_dir, dirname)
+    if not os.path.isdir(dirname):
+        os.makedirs(dirname)
 
 
 for n in range(0, args.nb_samples, args.batch_size):
