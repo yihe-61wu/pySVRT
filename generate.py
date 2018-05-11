@@ -70,12 +70,10 @@ parser.add_argument('--data_dir',
 
 parser.add_argument('--parsed_dir',
                     type = str,
-                    default = '',
                     help='Where to put parsed output strings')
 
 parser.add_argument('--parsed_dir_classic',
                     type = str,
-                    default = '',
                     help='Where to put classic-style parsed output strings')
 
 ######################################################################
