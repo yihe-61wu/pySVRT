@@ -369,23 +369,23 @@ void Shape::generate_zigzag(scalar_t *xp, scalar_t *yp, int *nb_pixels,
 
 Shape::Shape() {
   nb_pixels = 0;
-  x_pixels = 0;
-  y_pixels = 0;
+  //scalar_t x_pixels[nb_max_pixels];
+  //scalar_t y_pixels[nb_max_pixels];
 }
 
 Shape::~Shape() {
-  delete[] x_pixels;
-  delete[] y_pixels;
+  //delete[] x_pixels;
+  //delete[] y_pixels;
 }
 
 void Shape::randomize(scalar_t radius, scalar_t hole_radius) {
-  delete[] x_pixels;
-  delete[] y_pixels;
+  //delete[] x_pixels;
+  //delete[] y_pixels;
   nb_pixels = 0;
   scalar_t tmp_x_pixels[nb_max_pixels], tmp_y_pixels[nb_max_pixels];
   generate_part(tmp_x_pixels, tmp_y_pixels, &nb_pixels, radius, hole_radius);
-  x_pixels = new scalar_t[nb_pixels];
-  y_pixels = new scalar_t[nb_pixels];
+  //scalar_t x_pixels[nb_max_pixels];
+  //scalar_t y_pixels[nb_max_pixels];
   for(int p = 0; p < nb_pixels; p++) {
     x_pixels[p] = tmp_x_pixels[p];
     y_pixels[p] = tmp_y_pixels[p];
@@ -403,8 +403,8 @@ void Shape::randomize(scalar_t radius, scalar_t hole_radius) {
 }
 
 void Shape::randomize_by_type(scalar_t radius, scalar_t hole_radius, int type) {
-  delete[] x_pixels;
-  delete[] y_pixels;
+  //delete[] x_pixels;
+  //delete[] y_pixels;
   nb_pixels = 0;
   scalar_t tmp_x_pixels[nb_max_pixels], tmp_y_pixels[nb_max_pixels];
 
@@ -437,8 +437,8 @@ void Shape::randomize_by_type(scalar_t radius, scalar_t hole_radius, int type) {
     abort();
   }
 
-  x_pixels = new scalar_t[nb_pixels];
-  y_pixels = new scalar_t[nb_pixels];
+  //scalar_t x_pixels[nb_max_pixels];
+  //scalar_t y_pixels[nb_max_pixels];
   for(int p = 0; p < nb_pixels; p++) {
     x_pixels[p] = tmp_x_pixels[p];
     y_pixels[p] = tmp_y_pixels[p];
@@ -455,15 +455,15 @@ void Shape::randomize_random_type(scalar_t radius, scalar_t hole_radius) {
 }
 
 void Shape::copy(Shape *shape) {
-  delete[] x_pixels;
-  delete[] y_pixels;
+  //delete[] x_pixels;
+  //delete[] y_pixels;
   nb_pixels = shape->nb_pixels;
   n_pixels1 = shape->n_pixels1;
   n_pixels2 = shape->n_pixels2;
   n_pixels3 = shape->n_pixels3;
   n_pixels4 = shape->n_pixels4;
-  x_pixels = new scalar_t[nb_pixels];
-  y_pixels = new scalar_t[nb_pixels];
+  //scalar_t x_pixels[nb_max_pixels];
+  //scalar_t y_pixels[nb_max_pixels];
   for(int p = 0; p < nb_pixels; p++) {
     x_pixels[p] = shape->x_pixels[p];
     y_pixels[p] = shape->y_pixels[p];
@@ -499,76 +499,4 @@ void Shape::symmetrize(scalar_t axis_x, scalar_t axis_y) {
     x_pixels[p] = (  u * axis_y + v * axis_x) / sql;
     y_pixels[p] = (- u * axis_x + v * axis_y) / sql;
   }
-}
-
-
-int Shape::overwrites(Vignette *vignette, scalar_t xc, scalar_t yc, int n1, int n2) {
-  int x1 = int(x_pixels[n1 % nb_pixels] + xc);
-  int y1 = int(y_pixels[n1 % nb_pixels] + yc);
-  int x2 = int(x_pixels[n2 % nb_pixels] + xc);
-  int y2 = int(y_pixels[n2 % nb_pixels] + yc);
-  int n3 = (n1 + n2) / 2;
-
-  if(n1 + 1 < n2 && (abs(x1 - x2) > 1 || abs(y1 - y2) > 1)) {
-    return
-      overwrites(vignette, xc, yc, n1, n3) ||
-      overwrites(vignette, xc, yc, n3, n2);
-  } else {
-
-    if(x1 >= margin && x1 < Vignette::width - margin &&
-       y1 >= margin && y1 < Vignette::height - margin) {
-
-      if(margin > 0) {
-        for(int xx = x1 - margin; xx <= x1 + margin; xx++) {
-          for(int yy = y1 - margin; yy <= y1 + margin; yy++) {
-            if(vignette->content[xx + Vignette::width * yy] != 255) {
-              return 1;
-            }
-          }
-        }
-      }
-
-      return 0;
-    } else {
-      return 1;
-    }
-  }
-}
-
-int Shape::overwrites(Vignette *vignette, scalar_t xc, scalar_t yc) {
-  return
-    overwrites(vignette, xc, yc, n_pixels1, n_pixels2) ||
-    overwrites(vignette, xc, yc, n_pixels2, n_pixels3) ||
-    overwrites(vignette, xc, yc, n_pixels3, n_pixels4) ||
-    overwrites(vignette, xc, yc, n_pixels4, nb_pixels);
-}
-
-void Shape::draw(int part_number, Vignette *vignette, scalar_t xc, scalar_t yc, int n1, int n2) {
-  int x1 = int(x_pixels[n1 % nb_pixels] + xc);
-  int y1 = int(y_pixels[n1 % nb_pixels] + yc);
-  int x2 = int(x_pixels[n2 % nb_pixels] + xc);
-  int y2 = int(y_pixels[n2 % nb_pixels] + yc);
-  int n3 = (n1 + n2) / 2;
-
-  if(n1 + 1 < n2 && (abs(x1 - x2) > 1 || abs(y1 - y2) > 1)) {
-    draw(part_number, vignette, xc, yc, n1, n3);
-    draw(part_number, vignette, xc, yc, n3, n2);
-  } else {
-    if(x1 >= margin && x1 < Vignette::width-margin &&
-       y1 >= margin && y1 < Vignette::height-margin) {
-      vignette->content[x1 + Vignette::width * y1] = 0;
-#ifdef KEEP_PART_PRESENCE
-      vignette->part_presence[x1 + Vignette::width * y1] |= (1 << part_number);
-#endif
-    } else {
-      abort();
-    }
-  }
-}
-
-void Shape::draw(int part_number, Vignette *vignette, scalar_t xc, scalar_t yc) {
-  draw(part_number, vignette, xc, yc, n_pixels1, n_pixels2);
-  draw(part_number, vignette, xc, yc, n_pixels2, n_pixels3);
-  draw(part_number, vignette, xc, yc, n_pixels3, n_pixels4);
-  draw(part_number, vignette, xc, yc, n_pixels4, nb_pixels);
 }

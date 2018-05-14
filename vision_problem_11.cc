@@ -32,6 +32,7 @@ void VisionProblem_11::generate(int label, Vignette *vignette) {
   int xs, ys, i = 0, pxs, pys;
   const int dist_min = Vignette::width/12;
   int nb_attempts, max_nb_attempts = 100;
+  int scale, shapeness = 0;
 
   Vignette mask, tmp;
 
@@ -54,9 +55,14 @@ void VisionProblem_11::generate(int label, Vignette *vignette) {
         do {
 
           if(s == 0) {
-            shape.randomize(big_part_size / 2, big_part_hole_size / 2);
+            scale = big_part_size / 2;
+            shape.randomize(scale, big_part_hole_size / 2);
+            shapeness = 0;
+
           } else {
-            shape.randomize(small_part_size / 2, small_part_hole_size / 2);
+            scale = small_part_size / 2;
+            shape.randomize(scale, small_part_hole_size / 2);
+            shapeness = 1;
           }
 
           if(nb_shapes == 2 || s == 0 || label == 0) {
@@ -69,10 +75,10 @@ void VisionProblem_11::generate(int label, Vignette *vignette) {
           nb_attempts++;
 
         } while(nb_attempts < max_nb_attempts &&
-                shape.overwrites(&tmp, xs, ys));
+                tmp.overwrites(&shape, xs, ys));
 
         if(nb_attempts < max_nb_attempts) {
-          shape.draw(s, &tmp, xs, ys);
+          tmp.draw(s, &shape, xs, ys);
           tmp.fill(xs, ys, 128);
           i = tmp.intersection(&mask);
         }
@@ -83,7 +89,8 @@ void VisionProblem_11::generate(int label, Vignette *vignette) {
               ((label == 0 && i > 0) || (label == 1 && (i < 1 || i > 4))));
 
       if(nb_attempts < max_nb_attempts) {
-        shape.draw(s, vignette, xs, ys);
+        vignette->store_and_draw(s, &shape, xs, ys, shapeness,
+                                 0, scale, 0);
         pxs = xs; pys = ys;
 
         if(label == 0) {

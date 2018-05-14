@@ -82,14 +82,16 @@ void VisionProblem_17::generate(int label, Vignette *vignette) {
     error = 0;
     for(int n = 0; n < nb_shapes; n++) {
       if(shape_number[n] == 0) {
-        error |= shape1.overwrites(vignette, xs[n], ys[n]);
+        error |= vignette->overwrites(&shape1, xs[n], ys[n]);
         if(!error) {
-          shape1.draw(n, vignette, xs[n], ys[n]);
+          vignette->store_and_draw(n, &shape1, xs[n], ys[n], shape_number[n],
+                                   0, part_size / 2, 0);
         }
       } else {
-        error |= shape2.overwrites(vignette, xs[n], ys[n]);
+        error |= vignette->overwrites(&shape2, xs[n], ys[n]);
         if(!error) {
-          shape2.draw(n, vignette, xs[n], ys[n]);
+          vignette->store_and_draw(n, &shape2, xs[n], ys[n], shape_number[n],
+                                   0, part_size / 2, 0);
         }
       }
     }

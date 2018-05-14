@@ -31,6 +31,14 @@ void Vignette::clear() {
     part_presence[k] = 0;
 #endif
   }
+  nb_shapes = 0;
+  for(int i = 0; i < max_shapes * nb_symbolic_outputs; i++) {
+    shapes_symb_output[i] = -1.0;
+  }
+  for(int i = 0; i < max_shapes * max_shapes; i++) {
+    shape_is_bordering[i] = -1.0;
+    shape_is_containing[i] = -1.0;
+  }
 }
 
 void Vignette::fill(int x, int y, int v) {
@@ -98,108 +106,207 @@ void Vignette::grow() {
   }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+void Vignette::extract_part(int part_id, int *output) {
+  for(int x; x < Vignette::width * Vignette::height; x++) {
+    output[x] = (part_presence[x] & (1 << part_id)) ? 0 : 255;
+  }
+}
+
+int Vignette::overwrites(Shape *shape, scalar_t xc, scalar_t yc,
+                         int n1, int n2) {
+  int x1 = int(shape->x_pixels[n1 % shape->nb_pixels] + xc);
+  int y1 = int(shape->y_pixels[n1 % shape->nb_pixels] + yc);
+  int x2 = int(shape->x_pixels[n2 % shape->nb_pixels] + xc);
+  int y2 = int(shape->y_pixels[n2 % shape->nb_pixels] + yc);
+  int n3 = (n1 + n2) / 2;
+
+  if(n1 + 1 < n2 && (abs(x1 - x2) > 1 || abs(y1 - y2) > 1)) {
+    return
+      overwrites(shape, xc, yc, n1, n3) ||
+      overwrites(shape, xc, yc, n3, n2);
+  }
+  if(x1 < shape->margin || x1 >= Vignette::width - shape->margin ||
+      y1 < shape->margin || y1 >= Vignette::height - shape->margin) {
+    return 1;
+  }
+  if(shape->margin <= 0) {
+    return 0;
+  }
+  for(int xx = x1 - shape->margin; xx <= x1 + shape->margin; xx++) {
+    for(int yy = y1 - shape->margin; yy <= y1 + shape->margin; yy++) {
+      if(content[xx + Vignette::width * yy] != 255) {
+        return 1;
+      }
+    }
+  }
+
+  return 0;
+}
+
+int Vignette::overwrites(Shape *shape, scalar_t xc, scalar_t yc) {
+  return
+    overwrites(shape, xc, yc, shape->n_pixels1, shape->n_pixels2) ||
+    overwrites(shape, xc, yc, shape->n_pixels2, shape->n_pixels3) ||
+    overwrites(shape, xc, yc, shape->n_pixels3, shape->n_pixels4) ||
+    overwrites(shape, xc, yc, shape->n_pixels4, shape->nb_pixels);
+}
+
+void Vignette::draw(int part_number, Shape *shape, scalar_t xc,
+                    scalar_t yc, int n1, int n2) {
+  int x1 = int(shape->x_pixels[n1 % shape->nb_pixels] + xc);
+  int y1 = int(shape->y_pixels[n1 % shape->nb_pixels] + yc);
+  int x2 = int(shape->x_pixels[n2 % shape->nb_pixels] + xc);
+  int y2 = int(shape->y_pixels[n2 % shape->nb_pixels] + yc);
+  int n3 = (n1 + n2) / 2;
+
+  if(n1 + 1 < n2 && (abs(x1 - x2) > 1 || abs(y1 - y2) > 1)) {
+    draw(part_number, shape, xc, yc, n1, n3);
+    draw(part_number, shape, xc, yc, n3, n2);
+  } else {
+    if(x1 >= shape->margin && x1 < Vignette::width-shape->margin &&
+       y1 >= shape->margin && y1 < Vignette::height-shape->margin) {
+      content[x1 + Vignette::width * y1] = 0;
+#ifdef KEEP_PART_PRESENCE
+      part_presence[x1 + Vignette::width * y1] |= (1 << part_number);
+#endif
+    } else {
+      abort();
+    }
+  }
+}
+
+void Vignette::draw(int part_number, Shape *shape, scalar_t xc, scalar_t yc) {
+  draw(part_number, shape, xc, yc, shape->n_pixels1, shape->n_pixels2);
+  draw(part_number, shape, xc, yc, shape->n_pixels2, shape->n_pixels3);
+  draw(part_number, shape, xc, yc, shape->n_pixels3, shape->n_pixels4);
+  draw(part_number, shape, xc, yc, shape->n_pixels4, shape->nb_pixels);
+}
+
+void Vignette::store_and_draw(
+      int part_number,
+      Shape *shape,
+      scalar_t xc,
+      scalar_t yc,
+      int shapeness,
+      float rot,
+      float scale,
+      int is_mirrored) {
+  // x, y, shape_id, rotation, scale, is_mirrored
+  int offset = nb_symbolic_outputs * nb_shapes;
+  shapes_symb_output[offset + 0] = (float) xc;
+  shapes_symb_output[offset + 1] = (float) yc;
+  shapes_symb_output[offset + 2] = (float) shapeness;
+  shapes_symb_output[offset + 3] = (float) rot;
+  shapes_symb_output[offset + 4] = (float) scale;
+  shapes_symb_output[offset + 5] = (float) is_mirrored;
+  // Store shape center location
+  shapes_xs[nb_shapes] = xc;
+  shapes_ys[nb_shapes] = yc;
+  // Draw the shape
+  draw(part_number, shape, xc, yc);
+  nb_shapes++;
+}
+
+bool any_content_collides(int *content1, int *content2) {
+  for(int x; x < Vignette::width * Vignette::height; x++) {
+    if(content1[x] < 255 && content2[x] < 255) {
+      return true;
+    }
+  }
+  return false;
+}
+
+void Vignette::check_bordering() {
+  Vignette mask_0;
+  for(int n = 0; n < nb_shapes; n++) {
+    mask_0.clear();
+    this->extract_part(n, mask_0.content);
+    Vignette mask_1 = mask_0;
+    Vignette mask_2 = mask_0;
+    Vignette mask_3 = mask_0;
+    Vignette mask_4 = mask_0;
+    // For mask 0, we leave as is and just check for intersection
+    // For mask 1, we grow once and check for immediate adjacency
+    mask_1.grow();
+    // For mask 2, we grow to check for neighbouring within 5 pixels
+    for(int k = 0; k < Vignette::width / 24; k++) {
+      mask_2.grow();
+    }
+    // For mask 3, we grow to check for neighbouring within 10 pixels
+    // (c.f. problem 11)
+    for(int k = 0; k < Vignette::width / 12; k++) {
+      mask_3.grow();
+    }
+    // For mask 4, we grow to check for neighbouring within 16 pixels
+    // (c.f. problems 2 and 3)
+    for(int k = 0; k < Vignette::width / 8; k++) {
+      mask_4.grow();
+    }
+    for(int i = 0; i < nb_shapes; i++) {
+      float output = 0;
+      int second_shape_content[width * height];
+      this->extract_part(i, second_shape_content);
+      if(any_content_collides(mask_4.content, second_shape_content)) {
+        output += 0.2;
+      }
+      if(any_content_collides(mask_3.content, second_shape_content)) {
+        output += 0.2;
+      }
+      if(any_content_collides(mask_2.content, second_shape_content)) {
+        output += 0.2;
+      }
+      if(any_content_collides(mask_1.content, second_shape_content)) {
+        output += 0.2;
+      }
+      if(any_content_collides(mask_0.content, second_shape_content)) {
+        output += 0.2;
+      }
+      this->shape_is_bordering[n * max_shapes + i] = output;
+    }
+  }
+}
+
+void Vignette::check_containing() {
+  bool is_inside;
+  bool is_outside;
+  Vignette mask_grey_in;
+  for(int n = 0; n < nb_shapes; n++) {
+    mask_grey_in.clear();
+    this->extract_part(n, mask_grey_in.content);
+    Vignette mask_grey_out = mask_grey_in;
+    // If we fill from the centre of the shape, we'll fill its inside
+    // (more if the filling tool escapes the shape boundaries)
+    mask_grey_in.fill(shapes_xs[n], shapes_ys[n], 128);
+    // If we fill from the corners, we'll definitely fill all the vignette
+    // outside the shape, except in a very extreme edge case with a shape
+    // that is the size of the entire vignette.
+    mask_grey_out.fill(0, 0, 128);
+    mask_grey_out.fill(Vignette::width - 1, 0, 128);
+    mask_grey_out.fill(0, Vignette::height - 1, 128);
+    mask_grey_out.fill(Vignette::width - 1, Vignette::height - 1, 128);
+    for(int i = 0; i < nb_shapes; i++) {
+      int second_shape_content[width * height];
+      this->extract_part(i, second_shape_content);
+      is_inside = !any_content_collides(mask_grey_out.content,
+                                        second_shape_content);
+      is_outside = !any_content_collides(mask_grey_in.content,
+                                         second_shape_content);
+      float output = -1.0;
+      if(is_inside && is_outside) {
+        // This means the second shape is nowhere
+        output = -0.5;
+      } else if(is_inside && !is_outside) {
+        // This means the shape is genuinely inside
+        output = 1.0;
+      } else if(!is_inside && is_outside) {
+        // This means the shape is genuinely outside
+        output = 0.0;
+      } else if(!is_inside && !is_outside) {
+        // This means the shapes intersect, or shape n does not form a
+        // closed loop
+        output = 0.5;
+      }
+      this->shape_is_containing[n * max_shapes + i] = output;
+    }
+  }
+}

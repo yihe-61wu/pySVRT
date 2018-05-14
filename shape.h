@@ -27,23 +27,17 @@
 
 #include "misc.h"
 #include "random.h"
-#include "vignette.h"
+//#include "vignette.h"
 
 class Shape {
-  static const int margin = 1;
-  static const int nb_max_pixels = Vignette::width * Vignette::height;
+  //static const int nb_max_pixels = Vignette::width * Vignette::height;
+  static const int nb_max_pixels = 16384;
 
 #if __cplusplus >= 201103L
   static constexpr scalar_t gap_max = 0.25;
 #else
   static const scalar_t gap_max = 0.25;
 #endif
-
-  int n_pixels1, n_pixels2, n_pixels3, n_pixels4;
-  int nb_pixels;
-  scalar_t xc, yc;
-  scalar_t *x_pixels;
-  scalar_t *y_pixels;
 
   int generate_part_part(scalar_t *xp, scalar_t *yp, int *nb_pixels, scalar_t radius, scalar_t hole_radius,
                          scalar_t x1, scalar_t y1, scalar_t x2, scalar_t y2);
@@ -58,10 +52,14 @@ class Shape {
   void generate_spiral(scalar_t *xp, scalar_t *yp, int *nb_pixels, scalar_t radius, scalar_t hole_radius);
   void generate_zigzag(scalar_t *xp, scalar_t *yp, int *nb_pixels, scalar_t radius, scalar_t hole_radius);
 
-  int overwrites(Vignette *vignette, scalar_t xc, scalar_t yc, int first, int nb);
-  void draw(int part_number, Vignette *vignette, scalar_t xc, scalar_t yc, int first, int nb);
-
 public:
+  static const int margin = 1;
+  int nb_pixels;
+  int n_pixels1, n_pixels2, n_pixels3, n_pixels4;
+  scalar_t xc, yc;
+  scalar_t x_pixels[nb_max_pixels];
+  scalar_t y_pixels[nb_max_pixels];
+
   Shape();
   ~Shape();
 
@@ -74,8 +72,6 @@ public:
   void rotate(scalar_t alpha);
   void symmetrize(scalar_t axis_x, scalar_t axis_y);
 
-  int overwrites(Vignette *vignette, scalar_t xc, scalar_t yc);
-  void draw(int part_number, Vignette *vignette, scalar_t xc, scalar_t yc);
 };
 
 #endif

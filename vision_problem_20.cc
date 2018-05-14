@@ -31,24 +31,37 @@ VisionProblem_20::VisionProblem_20() { }
 void VisionProblem_20::generate(int label, Vignette *vignette) {
   int nb_shapes = 2;
   int xs[nb_shapes], ys[nb_shapes];
+  int shapeness[nb_shapes], mirroredness[nb_shapes];
+  scalar_t angles[nb_shapes];
   Shape shapes[nb_shapes];
 
   int error;
   do{
     vignette->clear();
     error = 0;
+    int shapeness_tracker = -1;
     for(int n = 0; !error && n < nb_shapes; n++) {
       xs[n] = int(random_uniform_0_1() * Vignette::width);
       ys[n] = int(random_uniform_0_1() * Vignette::height);
       if(!label || n == 0) {
         shapes[n].randomize(part_size / 2, part_hole_size / 2);
+        shapeness_tracker++;
+        shapeness[n] = shapeness_tracker;
+        mirroredness[n] = 0;
+        angles[n] = 0;
       } else {
         shapes[n].copy(&shapes[0]);
         shapes[n].symmetrize(ys[n] - ys[0], - xs[n] + xs[0]);
+        shapeness[n] = shapeness_tracker;
+        // Deconstruct the reflection into a horizontal reflection, followed
+        // by a rotation
+        mirroredness[n] = 1;
+        angles[n] = M_PI - 2 * atan2(ys[n] - ys[0], - xs[n] + xs[0]);
       }
-      error |= shapes[n].overwrites(vignette, xs[n], ys[n]);
+      error |= vignette->overwrites(&shapes[n], xs[n], ys[n]);
       if(!error) {
-        shapes[n].draw(n, vignette, xs[n], ys[n]);
+        vignette->store_and_draw(n, &shapes[n], xs[n], ys[n], shapeness[n],
+                                 angles[n], part_size / 2, mirroredness[n]);
       }
     }
   }  while(error);

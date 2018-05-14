@@ -35,3 +35,29 @@ ffi = create_extension(
 )
 
 ffi.build()
+
+extra_py = """
+
+import numpy as np
+import torch
+
+def generate_vignettes_full(problem, labels):
+
+    if isinstance(labels, np.ndarray):
+        labels = torch.from_numpy(np.array(labels)).type(torch.LongTensor)
+
+    nb_shapes = torch.ByteTensor()
+    shape_list = torch.FloatTensor()
+    is_containing = torch.FloatTensor()
+    is_bordering = torch.FloatTensor()
+
+    x = generate_vignettes_raw(problem, labels, nb_shapes, shape_list, is_bordering, is_containing)
+
+    return x, nb_shapes, shape_list, is_bordering, is_containing
+
+def generate_vignettes(problem, labels):
+    return generate_vignettes_full(problem, labels)[0]
+"""
+
+with open(path.join('svrt', '__init__.py'), 'a') as f:
+    f.write(extra_py)

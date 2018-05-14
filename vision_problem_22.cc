@@ -49,14 +49,17 @@ void VisionProblem_22::generate(int label, Vignette *vignette) {
 
     Shape shape;
 
+    int shapeness = -1;
     error = 0;
     for(int n = 0; n < nb_shapes; n++) {
       if(n == 0 || label == 0) {
         shape.randomize(part_size/2, hole_size/2);
+        shapeness++;
       }
-      error |= shape.overwrites(vignette, xs[n], ys[n]);
+      error |= vignette->overwrites(&shape, xs[n], ys[n]);
       if(!error) {
-        shape.draw(n, vignette, xs[n], ys[n]);
+        vignette->store_and_draw(n, &shape, xs[n], ys[n], shapeness,
+                                 0, part_size / 2, 0);
       }
     }
   } while(error);

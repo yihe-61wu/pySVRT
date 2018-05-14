@@ -195,6 +195,12 @@ struct VignetteSet {
   int width;
   int height;
   unsigned char *data;
+  int max_shapes;
+  int nb_symbolic_outputs;
+  unsigned char *nb_shapes_each;
+  float *shapes_symb_output;
+  float *shape_is_bordering;
+  float *shape_is_containing;
 };
 
 void svrt_generate_vignettes(int n_problem, int nb_vignettes, long *labels,
@@ -212,8 +218,18 @@ void svrt_generate_vignettes(int n_problem, int nb_vignettes, long *labels,
   result->width = Vignette::width;
   result->height = Vignette::height;
   result->data = (unsigned char *) malloc(sizeof(unsigned char) * result->nb_vignettes * result->width * result->height);
+  result->max_shapes = Vignette::max_shapes;
+  result->nb_symbolic_outputs = Vignette::nb_symbolic_outputs;
+  result->nb_shapes_each = (unsigned char *) malloc(sizeof(unsigned char) * result->nb_vignettes);
+  result->shapes_symb_output = (float *) malloc(sizeof(float) * result->nb_vignettes * result->max_shapes * result->nb_symbolic_outputs);
+  result->shape_is_bordering = (float *) malloc(sizeof(float) * result->nb_vignettes * result->max_shapes * result->max_shapes);
+  result->shape_is_containing = (float *) malloc(sizeof(float) * result->nb_vignettes * result->max_shapes * result->max_shapes);
 
   unsigned char *s = result->data;
+  unsigned char *out_pointer_nb_shapes = result->nb_shapes_each;
+  float *out_pointer_shapes_symb_output = result->shapes_symb_output;
+  float *out_pointer_shape_is_bordering = result->shape_is_bordering;
+  float *out_pointer_shape_is_containing = result->shape_is_containing;
   for(int i = 0; i < nb_vignettes; i++) {
     if(labels[i] == 0 || labels[i] == 1) {
       vg->generate(labels[i], &tmp);
@@ -222,9 +238,27 @@ void svrt_generate_vignettes(int n_problem, int nb_vignettes, long *labels,
       exit(1);
     }
 
+    // Parse metadata
+    tmp.check_bordering();
+    tmp.check_containing();
+
     int *r = tmp.content;
     for(int k = 0; k < Vignette::width * Vignette::height; k++) {
       *s++ = *r++;
+    }
+
+    *out_pointer_nb_shapes++ = tmp.nb_shapes;
+
+    float *in_pointer_shapes_symb_output = tmp.shapes_symb_output;
+    for(int k = 0; k < result->max_shapes * result->nb_symbolic_outputs; k++) {
+      *out_pointer_shapes_symb_output++ = in_pointer_shapes_symb_output[k];
+    }
+
+    float *in_pointer_shape_is_bordering = tmp.shape_is_bordering;
+    float *in_pointer_shape_is_containing = tmp.shape_is_containing;
+    for(int k = 0; k < result->max_shapes * result->max_shapes; k++) {
+      *out_pointer_shape_is_bordering++ = in_pointer_shape_is_bordering[k];
+      *out_pointer_shape_is_containing++ = in_pointer_shape_is_containing[k];
     }
   }
 

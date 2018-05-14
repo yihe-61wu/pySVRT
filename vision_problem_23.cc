@@ -44,10 +44,11 @@ void VisionProblem_23::generate(int label, Vignette *vignette) {
     do {
       x_big = int(random_uniform_0_1() * Vignette::width);
       y_big = int(random_uniform_0_1() * Vignette::height);
-    } while(big_shape.overwrites(vignette, x_big, y_big));
+    } while(vignette->overwrites(&big_shape, x_big, y_big));
 
     if(!error) {
-      big_shape.draw(0, vignette, x_big, y_big);
+      vignette->store_and_draw(0, &big_shape, x_big, y_big, 0,
+                               0, big_part_size / 2, 0);
 
       if(label) {
         // We fill outside
@@ -59,7 +60,7 @@ void VisionProblem_23::generate(int label, Vignette *vignette) {
           small_shape.randomize(small_part_size / 2, small_part_hole_size / 2);
           x_small = int(random_uniform_0_1() * Vignette::width);
           y_small = int(random_uniform_0_1() * Vignette::height);
-          error = small_shape.overwrites(vignette, x_small, y_small);
+          error = vignette->overwrites(&small_shape, x_small, y_small);
           nb_attempts++;
         } while(error && nb_attempts < 10);
 
@@ -68,20 +69,22 @@ void VisionProblem_23::generate(int label, Vignette *vignette) {
           vignette->replace_value(128, 255);
           vignette->fill(x_big, y_big, 128);
 
-          small_shape.draw(1, vignette, x_small, y_small);
+          vignette->store_and_draw(1, &small_shape, x_small, y_small, 1,
+                                   0, small_part_size / 2, 0);
 
           int nb_attempts = 0;
           do {
             small_shape.randomize(small_part_size / 2, small_part_hole_size / 2);
             x_small = int(random_uniform_0_1() * Vignette::width);
             y_small = int(random_uniform_0_1() * Vignette::height);
-            error = small_shape.overwrites(vignette, x_small, y_small);
+            error = vignette->overwrites(&small_shape, x_small, y_small);
             nb_attempts++;
           } while(error && nb_attempts < 10);
           if(!error) {
             // Found it, unfill and draw
             vignette->replace_value(128, 255);
-            small_shape.draw(2, vignette, x_small, y_small);
+            vignette->store_and_draw(2, &small_shape, x_small, y_small, 2,
+                                     0, small_part_size / 2, 0);
           }
         }
       } else {
@@ -96,24 +99,26 @@ void VisionProblem_23::generate(int label, Vignette *vignette) {
           small_shape.randomize(small_part_size / 2, small_part_hole_size / 2);
           x_small = int(random_uniform_0_1() * Vignette::width);
           y_small = int(random_uniform_0_1() * Vignette::height);
-          error = small_shape.overwrites(vignette, x_small, y_small);
+          error = vignette->overwrites(&small_shape, x_small, y_small);
           nb_attempts++;
         } while(error && nb_attempts < 10);
 
         if(!error) {
-          small_shape.draw(1, vignette, x_small, y_small);
+          vignette->store_and_draw(1, &small_shape, x_small, y_small, 1,
+                                   0, small_part_size / 2, 0);
           vignette->fill(x_small, y_small, 128);
           int nb_attempts = 0;
           do {
             small_shape.randomize(small_part_size / 2, small_part_hole_size / 2);
             x_small = int(random_uniform_0_1() * Vignette::width);
             y_small = int(random_uniform_0_1() * Vignette::height);
-            error = small_shape.overwrites(vignette, x_small, y_small);
+            error = vignette->overwrites(&small_shape, x_small, y_small);
             nb_attempts++;
           } while(error && nb_attempts < 10);
 
           if(!error) {
-            small_shape.draw(2, vignette, x_small, y_small);
+            vignette->store_and_draw(2, &small_shape, x_small, y_small, 2,
+                                     0, small_part_size / 2, 0);
             vignette->replace_value(128, 255);
           }
         }

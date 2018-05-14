@@ -99,9 +99,9 @@ void VisionProblem_51::generate(int label, Vignette *vignette) {
 
     error = 0;
     for(int n = 0; n < nb_shapes; n++) {
-      error |= shapes[n].overwrites(vignette, xs[n], ys[n]);
+      error |= vignette->overwrites(&shapes[n], xs[n], ys[n]);
       if(!error) {
-        shapes[n].draw(n, vignette, xs[n], ys[n]);
+        vignette->draw(n, &shapes[n], xs[n], ys[n]);
       }
     }
   } while(error);

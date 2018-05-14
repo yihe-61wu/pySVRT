@@ -44,9 +44,10 @@ void VisionProblem_18::generate(int label, Vignette *vignette) {
     for(int n = 0; n < nb_shapes/2; n++) {
       xs[n] = int(random_uniform_0_1() * (Vignette::width - part_size + 1)) + part_size/2;
       ys[n] = int(random_uniform_0_1() * (Vignette::height - part_size + 1)) + part_size/2;
-      error |= shape1.overwrites(vignette, xs[n], ys[n]);
+      error |= vignette->overwrites(&shape1, xs[n], ys[n]);
       if(!error) {
-        shape1.draw(n, vignette, xs[n], ys[n]);
+        vignette->store_and_draw(n, &shape1, xs[n], ys[n], 0,
+                                 0, part_size / 2, 0);
       }
     }
 
@@ -58,9 +59,10 @@ void VisionProblem_18::generate(int label, Vignette *vignette) {
         xs[n] = int(random_uniform_0_1() * (Vignette::width - part_size + 1)) + part_size/2;
         ys[n] = ys[n - nb_shapes/2];
       }
-      error |= shape2.overwrites(vignette, xs[n], ys[n]);
+      error |= vignette->overwrites(&shape2, xs[n], ys[n]);
       if(!error) {
-        shape2.draw(n, vignette, xs[n], ys[n]);
+        vignette->store_and_draw(n, &shape2, xs[n], ys[n], 0,
+                                 0, part_size / 2, 0);
       }
     }
   } while(error);
