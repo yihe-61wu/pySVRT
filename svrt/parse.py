@@ -3,6 +3,7 @@ Parsing symbolic output
 """
 
 import math
+import torch
 
 
 def parse_vignette_to_string_classic(
@@ -28,6 +29,9 @@ def parse_vignette_to_string_classic(
     string
         One multiline string encoding
     """
+
+    # Normalise sizes
+    shape_list[:, 4] /= torch.max(shape_list[:, 4])
 
     # First, parse each shape
     shape_reps = []
@@ -83,6 +87,9 @@ def parse_vignette_to_string(nb_shapes, shape_list, is_bordering,
     string
         One multiline string encoding
     """
+
+    # Normalise sizes
+    shape_list[:, 4] /= torch.max(shape_list[:, 4])
 
     # First, parse each shape
     shape_reps = []
