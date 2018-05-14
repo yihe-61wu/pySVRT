@@ -89,7 +89,12 @@ def parse_vignette_to_string(nb_shapes, shape_list, is_bordering,
     for i_shape in range(nb_shapes):
         shape_list[i_shape][3] %= 2 * math.pi
         this_shape_str = "Shape({:.0f},{:.0f},{:.0f},{:f},{:f},{:.0f})".format(
-            *shape_list[i_shape])
+            shape_list[i_shape, 0],
+            shape_list[i_shape, 1],
+            shape_list[i_shape, 2] + 1,
+            shape_list[i_shape, 4],
+            shape_list[i_shape, 3],
+            shape_list[i_shape, 5])
         shape_reps.append(this_shape_str)
     out = ','.join(shape_reps)
     out += "\n"
