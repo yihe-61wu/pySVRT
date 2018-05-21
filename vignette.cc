@@ -228,8 +228,8 @@ void Vignette::check_bordering() {
     // For mask 0, we leave as is and just check for intersection
     // For mask 1, we grow once and check for immediate adjacency
     mask_1.grow();
-    // For mask 2, we grow to check for neighbouring within 5 pixels
-    for(int k = 0; k < Vignette::width / 24; k++) {
+    // For mask 2, we grow to check for neighbouring within 2 pixels
+    for(int k = 0; k < 2; k++) {
       mask_2.grow();
     }
     // For mask 3, we grow to check for neighbouring within 10 pixels
