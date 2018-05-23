@@ -60,7 +60,7 @@ void VisionProblem_20::generate(int label, Vignette *vignette) {
       }
       error |= vignette->overwrites(&shapes[n], xs[n], ys[n]);
       if(!error) {
-        vignette->store_and_draw(n, &shapes[n], xs[n], ys[n], shapeness[n],
+        vignette->store_and_draw(&shapes[n], xs[n], ys[n], shapeness[n],
                                  angles[n], part_size / 2, mirroredness[n]);
       }
     }

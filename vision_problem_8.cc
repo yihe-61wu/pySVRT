@@ -49,7 +49,7 @@ void VisionProblem_8::generate(int label, Vignette *vignette) {
     } while(vignette->overwrites(&big_shape, x_big, y_big));
 
     if(!error) {
-      vignette->store_and_draw(0, &big_shape, x_big, y_big, 0,
+      vignette->store_and_draw(&big_shape, x_big, y_big, 0,
                                0, big_part_size / 2, 0);
 
       vignette->fill(x_big, y_big, 128);
@@ -77,7 +77,7 @@ void VisionProblem_8::generate(int label, Vignette *vignette) {
 
       if(!error) {
         vignette->replace_value(128, 255);
-        vignette->store_and_draw(1, &small_shape, x_small, y_small, small_shapeness,
+        vignette->store_and_draw(&small_shape, x_small, y_small, small_shapeness,
                                  0, big_part_size / 4, 0);
       }
     }

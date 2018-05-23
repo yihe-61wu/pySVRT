@@ -58,7 +58,7 @@ void VisionProblem_2::generate(int label, Vignette *vignette) {
       }
     }
 
-    vignette->store_and_draw(0, &big_shape, x_big, y_big, 0,
+    vignette->store_and_draw(&big_shape, x_big, y_big, 0,
                              0, big_part_size, 0);
     vignette->fill(x_big, y_big, 128);
     vignette->switch_values(128, 255);
@@ -76,7 +76,7 @@ void VisionProblem_2::generate(int label, Vignette *vignette) {
              (!label && mask.overwrites(&small_shape, x_small, y_small))));
 
     vignette->replace_value(128, 255);
-    vignette->store_and_draw(1, &small_shape, x_small, y_small, 1,
+    vignette->store_and_draw(&small_shape, x_small, y_small, 1,
                              0, small_part_size, 0);
   } while(nb_attempts >= max_nb_attempts);
 }

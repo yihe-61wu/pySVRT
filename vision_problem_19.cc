@@ -71,7 +71,7 @@ void VisionProblem_19::generate(int label, Vignette *vignette) {
     for(int n = 0; n < nb_shapes; n++) {
       error |= vignette->overwrites(&shapes[n], xs[n], ys[n]);
       if(!error) {
-        vignette->store_and_draw(n, &shapes[n], xs[n], ys[n], shapeness[n],
+        vignette->store_and_draw(&shapes[n], xs[n], ys[n], shapeness[n],
                                  angles[n], scales[n] * part_size / 2, 0);
       }
     }

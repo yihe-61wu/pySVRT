@@ -47,7 +47,7 @@ void VisionProblem_23::generate(int label, Vignette *vignette) {
     } while(vignette->overwrites(&big_shape, x_big, y_big));
 
     if(!error) {
-      vignette->store_and_draw(0, &big_shape, x_big, y_big, 0,
+      vignette->store_and_draw(&big_shape, x_big, y_big, 0,
                                0, big_part_size / 2, 0);
 
       if(label) {
@@ -69,7 +69,7 @@ void VisionProblem_23::generate(int label, Vignette *vignette) {
           vignette->replace_value(128, 255);
           vignette->fill(x_big, y_big, 128);
 
-          vignette->store_and_draw(1, &small_shape, x_small, y_small, 1,
+          vignette->store_and_draw(&small_shape, x_small, y_small, 1,
                                    0, small_part_size / 2, 0);
 
           int nb_attempts = 0;
@@ -83,7 +83,7 @@ void VisionProblem_23::generate(int label, Vignette *vignette) {
           if(!error) {
             // Found it, unfill and draw
             vignette->replace_value(128, 255);
-            vignette->store_and_draw(2, &small_shape, x_small, y_small, 2,
+            vignette->store_and_draw(&small_shape, x_small, y_small, 2,
                                      0, small_part_size / 2, 0);
           }
         }
@@ -104,7 +104,7 @@ void VisionProblem_23::generate(int label, Vignette *vignette) {
         } while(error && nb_attempts < 10);
 
         if(!error) {
-          vignette->store_and_draw(1, &small_shape, x_small, y_small, 1,
+          vignette->store_and_draw(&small_shape, x_small, y_small, 1,
                                    0, small_part_size / 2, 0);
           vignette->fill(x_small, y_small, 128);
           int nb_attempts = 0;
@@ -117,7 +117,7 @@ void VisionProblem_23::generate(int label, Vignette *vignette) {
           } while(error && nb_attempts < 10);
 
           if(!error) {
-            vignette->store_and_draw(2, &small_shape, x_small, y_small, 2,
+            vignette->store_and_draw(&small_shape, x_small, y_small, 2,
                                      0, small_part_size / 2, 0);
             vignette->replace_value(128, 255);
           }

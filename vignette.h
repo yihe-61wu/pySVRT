@@ -66,7 +66,7 @@ public:
 
   int overwrites(Shape *shape, scalar_t xc, scalar_t yc);
   void draw(int part_number, Shape *shape, scalar_t xc, scalar_t yc);
-  void store_and_draw(int part_number, Shape *shape, scalar_t xc, scalar_t yc,
+  void store_and_draw(Shape *shape, scalar_t xc, scalar_t yc,
                       int shapeness, float rot, float scale, int is_mirrored);
   void check_bordering();
   void check_containing();

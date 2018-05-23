@@ -48,7 +48,7 @@ void VisionProblem_7::generate(int label, Vignette *vignette) {
       xs = int(random_uniform_0_1() * Vignette::width);
       ys = int(random_uniform_0_1() * Vignette::height);
     } while(vignette->overwrites(&shape, xs, ys));
-    vignette->store_and_draw(s, &shape, xs, ys, shapeness,
+    vignette->store_and_draw(&shape, xs, ys, shapeness,
                              0, part_size, 0);
   }
 }

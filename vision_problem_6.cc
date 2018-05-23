@@ -89,13 +89,13 @@ void VisionProblem_6::generate(int label, Vignette *vignette) {
       if(shape_number[n] == 0) {
         error |= vignette->overwrites(&shape1, xs[n], ys[n]);
         if(!error) {
-          vignette->store_and_draw(n, &shape1, xs[n], ys[n], 0,
+          vignette->store_and_draw(&shape1, xs[n], ys[n], 0,
                                    0, part_size / 2, 0);
         }
       } else {
         error |= vignette->overwrites(&shape2, xs[n], ys[n]);
         if(!error) {
-          vignette->store_and_draw(n, &shape2, xs[n], ys[n], 1,
+          vignette->store_and_draw(&shape2, xs[n], ys[n], 1,
                                    0, part_size / 2, 0);
         }
       }

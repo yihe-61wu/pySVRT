@@ -88,7 +88,7 @@ void VisionProblem_3::generate(int label, Vignette *vignette) {
       } while(nb_attempts < max_nb_attempts && (!proper_margin || !proper_connection));
 
       if(nb_attempts < max_nb_attempts) {
-        vignette->store_and_draw(s, &shape, xs, ys, s, 0, part_size, 0);
+        vignette->store_and_draw(&shape, xs, ys, s, 0, part_size, 0);
         vignette->fill(xs, ys, 128);
         if((label && s < 2) || (!label && s < 1)) {
           for(int k = 0; k < dist_min; k++) tmp.grow();

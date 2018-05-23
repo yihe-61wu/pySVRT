@@ -63,7 +63,7 @@ void VisionProblem_10::generate(int label, Vignette *vignette) {
       }
       error |= vignette->overwrites(&shape, xs[n], ys[n]);
       if(!error) {
-        vignette->store_and_draw(n, &shape, xs[n], ys[n], 0,
+        vignette->store_and_draw(&shape, xs[n], ys[n], 0,
                                  0, part_size / 2, 0);
       }
     }

@@ -183,7 +183,6 @@ void Vignette::draw(int part_number, Shape *shape, scalar_t xc, scalar_t yc) {
 }
 
 void Vignette::store_and_draw(
-      int part_number,
       Shape *shape,
       scalar_t xc,
       scalar_t yc,
@@ -203,7 +202,7 @@ void Vignette::store_and_draw(
   shapes_xs[nb_shapes] = xc;
   shapes_ys[nb_shapes] = yc;
   // Draw the shape
-  draw(part_number, shape, xc, yc);
+  draw(nb_shapes, shape, xc, yc);
   nb_shapes++;
 }
 

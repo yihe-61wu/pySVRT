@@ -89,7 +89,7 @@ void VisionProblem_11::generate(int label, Vignette *vignette) {
               ((label == 0 && i > 0) || (label == 1 && (i < 1 || i > 4))));
 
       if(nb_attempts < max_nb_attempts) {
-        vignette->store_and_draw(s, &shape, xs, ys, shapeness,
+        vignette->store_and_draw(&shape, xs, ys, shapeness,
                                  0, scale, 0);
         pxs = xs; pys = ys;
 

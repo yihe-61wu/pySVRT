@@ -77,7 +77,7 @@ void VisionProblem_12::generate(int label, Vignette *vignette) {
 
       error |= vignette->overwrites(&shape, xs, ys);
       if(!error) {
-        vignette->store_and_draw(n, &shape, xs, ys, n,
+        vignette->store_and_draw(&shape, xs, ys, n,
                                  0, scale, 0);
       }
     }

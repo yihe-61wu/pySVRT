@@ -54,7 +54,7 @@ void VisionProblem_16::generate(int label, Vignette *vignette) {
       ys[n] = int(random_uniform_0_1() * (Vignette::height - part_size + 1)) + part_size/2;
       error |= vignette->overwrites(&shape1, xs[n], ys[n]);
       if(!error) {
-        vignette->store_and_draw(n, &shape1, xs[n], ys[n], 0,
+        vignette->store_and_draw(&shape1, xs[n], ys[n], 0,
                                  0, part_size / 2, 0);
       }
     }
@@ -64,7 +64,7 @@ void VisionProblem_16::generate(int label, Vignette *vignette) {
       ys[n] = ys[n - nb_shapes/2];
       error |= vignette->overwrites(&shape2, xs[n], ys[n]);
       if(!error) {
-        vignette->store_and_draw(n, &shape2, xs[n], ys[n], 0,
+        vignette->store_and_draw(&shape2, xs[n], ys[n], 0,
                                  0, part_size / 2, mirroredness2);
       }
     }
