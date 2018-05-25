@@ -37,7 +37,7 @@ struct VignetteSet {
   int nb_symbolic_outputs;
   unsigned char *nb_shapes_each;
   float *shapes_symb_output;
-  float *shape_is_bordering;
+  unsigned char *intershape_distance;
   float *shape_is_containing;
 };
 

@@ -95,7 +95,7 @@ void seed(long s) {
 THByteTensor *generate_vignettes_raw(
       long n_problem, THLongTensor *labels,
       THByteTensor *nb_shapes, THFloatTensor *shape_list,
-      THFloatTensor *is_bordering, THFloatTensor *is_containing) {
+      THByteTensor *intershape_distance, THFloatTensor *is_containing) {
   struct VignetteSet vs;
   long nb_vignettes;
   long st0, st1, st2;
@@ -180,32 +180,45 @@ THByteTensor *generate_vignettes_raw(
     }
   }
 
-
   // alloc tensor
-  THFloatTensor_resize3d(is_bordering, vs.nb_vignettes, max_shapes, max_shapes);
-  THFloatTensor_resize3d(is_containing, vs.nb_vignettes, max_shapes, max_shapes);
+  THByteTensor_resize3d(intershape_distance, vs.nb_vignettes, max_shapes, max_shapes);
 
-  st0 = THFloatTensor_stride(is_bordering, 0);
-  st1 = THFloatTensor_stride(is_bordering, 1);
-  st2 = THFloatTensor_stride(is_bordering, 2);
+  st0 = THByteTensor_stride(intershape_distance, 0);
+  st1 = THByteTensor_stride(intershape_distance, 1);
+  st2 = THByteTensor_stride(intershape_distance, 2);
 
   // convert tensor data
-  float *in_pointer_shape_is_bordering = vs.shape_is_bordering;
+  unsigned char *in_pointer_intershape_distance = vs.intershape_distance;
+  unsigned char *out_pointer_intershape_distance_base, *out_pointer_intershape_distance;
+  for(v = 0; v < vs.nb_vignettes; v++) {
+    out_pointer_intershape_distance_base = THByteTensor_storage(intershape_distance)->data
+        + THByteTensor_storageOffset(intershape_distance) + v * st0;
+    for(i = 0; i < vs.max_shapes; i++) {
+      out_pointer_intershape_distance = out_pointer_intershape_distance_base + i * st1;
+      for(j = 0; j < vs.max_shapes; j++) {
+        *out_pointer_intershape_distance = (unsigned char) (*in_pointer_intershape_distance);
+        in_pointer_intershape_distance++;
+        out_pointer_intershape_distance += st2;
+      }
+    }
+  }
+
+  // alloc tensor
+  THFloatTensor_resize3d(is_containing, vs.nb_vignettes, max_shapes, max_shapes);
+
+  st0 = THFloatTensor_stride(is_containing, 0);
+  st1 = THFloatTensor_stride(is_containing, 1);
+  st2 = THFloatTensor_stride(is_containing, 2);
+
+  // convert tensor data
   float *in_pointer_shape_is_containing = vs.shape_is_containing;
-  float *out_pointer_shape_is_bordering_base, *out_pointer_shape_is_bordering;
   float *out_pointer_shape_is_containing_base, *out_pointer_shape_is_containing;
   for(v = 0; v < vs.nb_vignettes; v++) {
-    out_pointer_shape_is_bordering_base = THFloatTensor_storage(is_bordering)->data
-        + THFloatTensor_storageOffset(is_bordering) + v * st0;
     out_pointer_shape_is_containing_base = THFloatTensor_storage(is_containing)->data
         + THFloatTensor_storageOffset(is_containing) + v * st0;
     for(i = 0; i < vs.max_shapes; i++) {
-      out_pointer_shape_is_bordering = out_pointer_shape_is_bordering_base + i * st1;
       out_pointer_shape_is_containing = out_pointer_shape_is_containing_base + i * st1;
       for(j = 0; j < vs.max_shapes; j++) {
-        *out_pointer_shape_is_bordering = (float) (*in_pointer_shape_is_bordering);
-        in_pointer_shape_is_bordering++;
-        out_pointer_shape_is_bordering += st2;
         *out_pointer_shape_is_containing = (float) (*in_pointer_shape_is_containing);
         in_pointer_shape_is_containing++;
         out_pointer_shape_is_containing += st2;

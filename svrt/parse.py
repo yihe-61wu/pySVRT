@@ -7,7 +7,7 @@ import torch
 
 
 def parse_vignette_to_string_classic(
-        nb_shapes, shape_list, is_bordering, is_containing):
+        nb_shapes, shape_list, intershape_distance, is_containing):
     """
     Parse symoblic form of vignette into textual output.
     Matching the style of sasquatch (Ellis et al., 2015).
@@ -19,7 +19,7 @@ def parse_vignette_to_string_classic(
     shape_list : Tensor [max_num_shapes, 6]
         Symbolic representation of each shape, containing:
         x, y, shape_id, rotation, scale, is_mirrored
-    is_bordering : Tensor [max_num_shapes, max_num_shapes ]
+    intershape_distance : Tensor [max_num_shapes, max_num_shapes ]
         Whether each pair of shapes are touching .
     is_containing : Tensor [max_num_shapes, max_num_shapes ]
         For each pair of shapes, whether one shape entirely surrounds another.
@@ -58,13 +58,13 @@ def parse_vignette_to_string_classic(
         for j in range(i, nb_shapes):
             if i == j:
                 continue
-            if is_bordering[i,j] > 0.75:
+            if intershape_distance[i,j] < 2.5:
                 out += "borders(" + str(i) + ", " + str(j) + ")\n"
 
     return out
 
 
-def parse_vignette_to_string(nb_shapes, shape_list, is_bordering,
+def parse_vignette_to_string(nb_shapes, shape_list, intershape_distance,
                              is_containing):
     """
     Parse symoblic form of vignette into textual output.
@@ -76,7 +76,7 @@ def parse_vignette_to_string(nb_shapes, shape_list, is_bordering,
     shape_list : Tensor [max_num_shapes, 6]
         Symbolic representation of each shape, containing:
         x, y, shape_id, rotation, scale, is_mirrored
-    is_bordering : Tensor [max_num_shapes, max_num_shapes ]
+    intershape_distance : Tensor [max_num_shapes, max_num_shapes ]
         Whether each pair of shapes are touching .
     is_containing : Tensor [max_num_shapes, max_num_shapes ]
         For each pair of shapes, whether one shape entirely surrounds another.
@@ -119,13 +119,13 @@ def parse_vignette_to_string(nb_shapes, shape_list, is_bordering,
         for j in range(i, nb_shapes):
             if i == j:
                 continue
-            if is_bordering[i,j] > 0.75:
+            if intershape_distance[i,j] < 2.5:
                 out += "borders(" + str(i) + ", " + str(j) + ")\n"
 
     return out
 
 
-def parse_vignettes_to_strings(nb_shapes, shape_list, is_bordering,
+def parse_vignettes_to_strings(nb_shapes, shape_list, intershape_distance,
                                is_containing):
     """
     Parse symoblic form of vignette into textual output.
@@ -137,7 +137,7 @@ def parse_vignettes_to_strings(nb_shapes, shape_list, is_bordering,
     shape_list : Tensor [num_vignettes, max_num_shapes, 6]
         Symbolic representation of each shape, containing:
         x, y, shape_id, rotation, scale, is_mirrored
-    is_bordering : Tensor [num_vignettes, max_num_shapes, max_num_shapes ]
+    intershape_distance : Tensor [num_vignettes, max_num_shapes, max_num_shapes ]
         Whether each pair of shapes are touching .
     is_containing : Tensor [num_vignettes, max_num_shapes, max_num_shapes ]
         For each pair of shapes, whether one shape entirely surrounds another.
@@ -154,7 +154,7 @@ def parse_vignettes_to_strings(nb_shapes, shape_list, is_bordering,
             parse_vignette_to_string(
                 nb_shapes[i],
                 shape_list[i],
-                is_bordering[i],
+                intershape_distance[i],
                 is_containing[i]
                 )
             )

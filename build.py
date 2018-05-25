@@ -49,11 +49,11 @@ def generate_vignettes_full(problem, labels):
     nb_shapes = torch.ByteTensor()
     shape_list = torch.FloatTensor()
     is_containing = torch.FloatTensor()
-    is_bordering = torch.FloatTensor()
+    intershape_distance = torch.ByteTensor()
 
-    x = generate_vignettes_raw(problem, labels, nb_shapes, shape_list, is_bordering, is_containing)
+    x = generate_vignettes_raw(problem, labels, nb_shapes, shape_list, intershape_distance, is_containing)
 
-    return x, nb_shapes, shape_list, is_bordering, is_containing
+    return x, nb_shapes, shape_list, intershape_distance, is_containing
 
 def generate_vignettes(problem, labels):
     return generate_vignettes_full(problem, labels)[0]

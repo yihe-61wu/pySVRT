@@ -29,7 +29,7 @@ def load_from_h5(dirname, problem, label=None):
         Number of shapes in each sample vignette.
     shape_list : torch.FloatTensor
         Details (dim 2) about each shape (dim 1) in each vignette (dim 0).
-    is_bordering : torch.FloatTensor
+    intershape_distance : torch.FloatTensor
         For each pair of shapes, are they bordering each other.
     is_containing : torch.FloatTensor
         For each pair of shapes, is one inside the other.
@@ -53,7 +53,7 @@ def load_from_h5(dirname, problem, label=None):
             labels = []
             nb_shapes = []
             shape_list = []
-            is_bordering = []
+            intershape_distance = []
             is_containing = []
 
             for l in labels_to_load:
@@ -68,9 +68,9 @@ def load_from_h5(dirname, problem, label=None):
                         f['class_{}'.format(l)]['shape_list'][record_name]
                         )
                     )
-                is_bordering.append(
+                intershape_distance.append(
                     torch.FloatTensor(
-                        f['class_{}'.format(l)]['is_bordering'][record_name]
+                        f['class_{}'.format(l)]['intershape_distance'][record_name]
                         )
                     )
                 is_containing.append(
@@ -86,7 +86,7 @@ def load_from_h5(dirname, problem, label=None):
             labels = torch.cat(labels)
             nb_shapes = torch.cat(nb_shapes)
             shape_list = torch.cat(shape_list)
-            is_bordering = torch.cat(is_bordering)
+            intershape_distance = torch.cat(intershape_distance)
             is_containing = torch.cat(is_containing)
 
-            yield labels, nb_shapes, shape_list, is_bordering, is_containing
+            yield labels, nb_shapes, shape_list, intershape_distance, is_containing

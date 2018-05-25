@@ -51,7 +51,7 @@ public:
   scalar_t shapes_ys[max_shapes];
 
   float shapes_symb_output[max_shapes * nb_symbolic_outputs];
-  float shape_is_bordering[max_shapes * max_shapes];
+  unsigned char intershape_distance[max_shapes * max_shapes];
   float shape_is_containing[max_shapes * max_shapes];
 
   void clear();

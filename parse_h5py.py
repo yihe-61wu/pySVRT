@@ -66,7 +66,7 @@ for problem in problems:
     # Load from HDF5
     n = 0
     r = 0
-    for labels, nb_shapes, shape_list, is_bordering, is_containing in \
+    for labels, nb_shapes, shape_list, intershape_distance, is_containing in \
             svrt.ioutils.load_from_h5(args.h5_dir, problem):
         r += 1
         print('Record {}'.format(r))
@@ -77,7 +77,7 @@ for problem in problems:
             # Output parsed strings in classic sasquatch style
             if args.parsed_dir_classic:
                 parsed_str = svrt.parse.parse_vignette_to_string_classic(
-                    nb_shapes[k], shape_list[k], is_bordering[k], is_containing[k])
+                    nb_shapes[k], shape_list[k], intershape_distance[k], is_containing[k])
                 fname = os.path.join(args.parsed_dir_classic, subdir_fname)
                 make_dirs_for_file(fname)
                 with open(fname, "w") as f:
@@ -85,7 +85,7 @@ for problem in problems:
             # Output parsed strings in updated style, with rotation and reflection
             if args.parsed_dir:
                 parsed_str = svrt.parse.parse_vignette_to_string(
-                    nb_shapes[k], shape_list[k], is_bordering[k], is_containing[k])
+                    nb_shapes[k], shape_list[k], intershape_distance[k], is_containing[k])
                 fname = os.path.join(args.parsed_dir, subdir_fname)
                 make_dirs_for_file(fname)
                 with open(fname, "w") as f:

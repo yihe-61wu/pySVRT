@@ -199,7 +199,7 @@ struct VignetteSet {
   int nb_symbolic_outputs;
   unsigned char *nb_shapes_each;
   float *shapes_symb_output;
-  float *shape_is_bordering;
+  unsigned char *intershape_distance;
   float *shape_is_containing;
 };
 
@@ -222,13 +222,13 @@ void svrt_generate_vignettes(int n_problem, int nb_vignettes, long *labels,
   result->nb_symbolic_outputs = Vignette::nb_symbolic_outputs;
   result->nb_shapes_each = (unsigned char *) malloc(sizeof(unsigned char) * result->nb_vignettes);
   result->shapes_symb_output = (float *) malloc(sizeof(float) * result->nb_vignettes * result->max_shapes * result->nb_symbolic_outputs);
-  result->shape_is_bordering = (float *) malloc(sizeof(float) * result->nb_vignettes * result->max_shapes * result->max_shapes);
+  result->intershape_distance = (unsigned char *) malloc(sizeof(unsigned char) * result->nb_vignettes * result->max_shapes * result->max_shapes);
   result->shape_is_containing = (float *) malloc(sizeof(float) * result->nb_vignettes * result->max_shapes * result->max_shapes);
 
   unsigned char *s = result->data;
   unsigned char *out_pointer_nb_shapes = result->nb_shapes_each;
   float *out_pointer_shapes_symb_output = result->shapes_symb_output;
-  float *out_pointer_shape_is_bordering = result->shape_is_bordering;
+  unsigned char *out_pointer_intershape_distance = result->intershape_distance;
   float *out_pointer_shape_is_containing = result->shape_is_containing;
   for(int i = 0; i < nb_vignettes; i++) {
     if(labels[i] == 0 || labels[i] == 1) {
@@ -254,10 +254,10 @@ void svrt_generate_vignettes(int n_problem, int nb_vignettes, long *labels,
       *out_pointer_shapes_symb_output++ = in_pointer_shapes_symb_output[k];
     }
 
-    float *in_pointer_shape_is_bordering = tmp.shape_is_bordering;
+    unsigned char *in_pointer_intershape_distance = tmp.intershape_distance;
     float *in_pointer_shape_is_containing = tmp.shape_is_containing;
     for(int k = 0; k < result->max_shapes * result->max_shapes; k++) {
-      *out_pointer_shape_is_bordering++ = in_pointer_shape_is_bordering[k];
+      *out_pointer_intershape_distance++ = in_pointer_intershape_distance[k];
       *out_pointer_shape_is_containing++ = in_pointer_shape_is_containing[k];
     }
   }

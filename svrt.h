@@ -34,6 +34,6 @@ THByteTensor *generate_vignettes_raw(
   THLongTensor *labels,
   THByteTensor *nb_shapes,
   THFloatTensor *shape_list,
-  THFloatTensor *is_bordering,
+  THByteTensor *intershape_distance,
   THFloatTensor *is_containing
   );
