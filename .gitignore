@@ -5,6 +5,7 @@
 Makefile.depend
 svrt/__init__.py
 example*.png
+data*
 
 
 ##---------------------------------------------------
