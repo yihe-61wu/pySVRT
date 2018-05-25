@@ -128,7 +128,7 @@ if args.symb_h5_obf_dir:
 
 
 for n in range(0, args.nb_samples, args.batch_size):
-    print(n, '/', args.nb_samples)
+    print('{}/{}'.format(n, args.nb_samples))
     labels = torch.LongTensor(min(args.batch_size, args.nb_samples - n)).zero_()
     labels.narrow(0, 0, labels.size(0)//2).fill_(1)
     x, nb_shapes, shape_list, is_bordering, is_containing = \
