@@ -16,7 +16,7 @@ def np_invert_permutation(p):
     return s
 
 
-def randomize_shape_order(nb_shapes, shape_list, is_bordering, is_containing,
+def randomize_shape_order(nb_shapes, shape_list, intershape_distance, is_containing,
                           relabel_shapeness=True):
     # Check which shapes are real and which are placeholders. Placeholders
     # are denoted with -1 in all columns, which is most clearly an invalid
@@ -29,10 +29,10 @@ def randomize_shape_order(nb_shapes, shape_list, is_bordering, is_containing,
 
     # Shuffle order of shapes in the vignette
     uu = []  # List of each vignette of reordered shape_list contents
-    vv = []  # List of each vignette of reordered is_bordering
+    vv = []  # List of each vignette of reordered intershape_distance
     ww = []  # List of each vignette of reordered is_containing
     # Loop over each vignette
-    for (n, u, v, w) in zip(n_shapes_actual, shape_list, is_bordering, is_containing):
+    for (n, u, v, w) in zip(n_shapes_actual, shape_list, intershape_distance, is_containing):
         # Create a random permutation for this vignette
         p = torch.cat([torch.randperm(n),
                        torch.arange(n, n_shapes_max).type(torch.LongTensor)])
@@ -59,10 +59,10 @@ def randomize_shape_order(nb_shapes, shape_list, is_bordering, is_containing,
             uu[i][:n, 2] = torch.Tensor(remapped_shapeness)
 
     shape_list = torch.stack(uu)
-    is_bordering = torch.stack(vv)
+    intershape_distance = torch.stack(vv)
     is_containing = torch.stack(ww)
 
-    return shape_list, is_bordering, is_containing
+    return shape_list, intershape_distance, is_containing
 
 
 def randomize_shape_rotations(shape_list, nb_shapes):
@@ -130,9 +130,9 @@ def randomize_shape_reflections(shape_list, nb_shapes):
     return shape_list
 
 
-def obfuscate_shape_construction(nb_shapes, shape_list, is_bordering, is_containing):
-    shape_list, is_bordering, is_containing = randomize_shape_order(
-        nb_shapes, shape_list, is_bordering, is_containing)
+def obfuscate_shape_construction(nb_shapes, shape_list, intershape_distance, is_containing):
+    shape_list, intershape_distance, is_containing = randomize_shape_order(
+        nb_shapes, shape_list, intershape_distance, is_containing)
     shape_list = randomize_shape_rotations(shape_list, nb_shapes)
     shape_list = randomize_shape_reflections(shape_list, nb_shapes)
-    return nb_shapes, shape_list, is_bordering, is_containing
+    return nb_shapes, shape_list, intershape_distance, is_containing

@@ -36,7 +36,7 @@ void Vignette::clear() {
     shapes_symb_output[i] = -1.0;
   }
   for(int i = 0; i < max_shapes * max_shapes; i++) {
-    shape_is_bordering[i] = -1.0;
+    intershape_distance[i] = -1.0;
     shape_is_containing[i] = -1.0;
   }
 }
@@ -216,51 +216,33 @@ bool any_content_collides(int *content1, int *content2) {
 }
 
 void Vignette::check_bordering() {
-  Vignette mask_0;
+  int MAX_DIST = 16;
+  Vignette masks[MAX_DIST+1];
   for(int n = 0; n < nb_shapes; n++) {
-    mask_0.clear();
-    this->extract_part(n, mask_0.content);
-    Vignette mask_1 = mask_0;
-    Vignette mask_2 = mask_0;
-    Vignette mask_3 = mask_0;
-    Vignette mask_4 = mask_0;
+    masks[0].clear();
+    // Extract the relevant shape
+    this->extract_part(n, masks[0].content);
     // For mask 0, we leave as is and just check for intersection
-    // For mask 1, we grow once and check for immediate adjacency
-    mask_1.grow();
-    // For mask 2, we grow to check for neighbouring within 2 pixels
-    for(int k = 0; k < 2; k++) {
-      mask_2.grow();
-    }
-    // For mask 3, we grow to check for neighbouring within 10 pixels
-    // (c.f. problem 11)
-    for(int k = 0; k < Vignette::width / 12; k++) {
-      mask_3.grow();
-    }
-    // For mask 4, we grow to check for neighbouring within 16 pixels
-    // (c.f. problems 2 and 3)
-    for(int k = 0; k < Vignette::width / 8; k++) {
-      mask_4.grow();
+    // For the rest, we grow the filled pixels out by 1 in all four cardinal
+    // directions, and save after each step, up to the maximum distance we
+    // will measure
+    for(int k = 1; k <= MAX_DIST; k++) {
+      masks[k] = masks[k-1];
+      masks[k].grow();
     }
     for(int i = 0; i < nb_shapes; i++) {
-      float output = 0;
+      int output = MAX_DIST + 1;
+      // Extract the second shape for comarison
       int second_shape_content[width * height];
       this->extract_part(i, second_shape_content);
-      if(any_content_collides(mask_4.content, second_shape_content)) {
-        output += 0.2;
+      // Check which mask first collides with it
+      for(int k = 0; k <= MAX_DIST; k++) {
+        if(any_content_collides(masks[k].content, second_shape_content)) {
+          output = k;
+          break;
+        }
       }
-      if(any_content_collides(mask_3.content, second_shape_content)) {
-        output += 0.2;
-      }
-      if(any_content_collides(mask_2.content, second_shape_content)) {
-        output += 0.2;
-      }
-      if(any_content_collides(mask_1.content, second_shape_content)) {
-        output += 0.2;
-      }
-      if(any_content_collides(mask_0.content, second_shape_content)) {
-        output += 0.2;
-      }
-      this->shape_is_bordering[n * max_shapes + i] = output;
+      this->intershape_distance[n * max_shapes + i] = output;
     }
   }
 }

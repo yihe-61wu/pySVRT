@@ -131,7 +131,7 @@ for n in range(0, args.nb_samples, args.batch_size):
     print('{}/{}'.format(n, args.nb_samples))
     labels = torch.LongTensor(min(args.batch_size, args.nb_samples - n)).zero_()
     labels.narrow(0, 0, labels.size(0)//2).fill_(1)
-    x, nb_shapes, shape_list, is_bordering, is_containing = \
+    x, nb_shapes, shape_list, intershape_distance, is_containing = \
         svrt.generate_vignettes_full(args.problem, labels)
     # Save to H5
     if args.symb_h5_raw_dir:
@@ -145,15 +145,15 @@ for n in range(0, args.nb_samples, args.batch_size):
                 'class_{:d}/shape_list/{:d}'.format(class_label, n),
                 data=shape_list[vg_is_class_member, :, :])
             hf.create_dataset(
-                'class_{:d}/is_bordering/{:d}'.format(class_label, n),
-                data=is_bordering[vg_is_class_member, :, :])
+                'class_{:d}/intershape_distance/{:d}'.format(class_label, n),
+                data=intershape_distance[vg_is_class_member, :, :])
             hf.create_dataset(
                 'class_{:d}/is_containing/{:d}'.format(class_label, n),
                 data=is_containing[vg_is_class_member, :, :])
     # Obfuscate shape construction order, and rotation/reflection state
-    nb_shapes, shape_list, is_bordering, is_containing = \
+    nb_shapes, shape_list, intershape_distance, is_containing = \
         svrt.utils.obfuscate_shape_construction(
-            nb_shapes, shape_list, is_bordering, is_containing)
+            nb_shapes, shape_list, intershape_distance, is_containing)
     # Save to H5
     if args.symb_h5_raw_dir:
         hf = hf_obf
@@ -166,8 +166,8 @@ for n in range(0, args.nb_samples, args.batch_size):
                 'class_{:d}/shape_list/{:d}'.format(class_label, n),
                 data=shape_list[vg_is_class_member, :, :])
             hf.create_dataset(
-                'class_{:d}/is_bordering/{:d}'.format(class_label, n),
-                data=is_bordering[vg_is_class_member, :, :])
+                'class_{:d}/intershape_distance/{:d}'.format(class_label, n),
+                data=intershape_distance[vg_is_class_member, :, :])
             hf.create_dataset(
                 'class_{:d}/is_containing/{:d}'.format(class_label, n),
                 data=is_containing[vg_is_class_member, :, :])
@@ -183,7 +183,7 @@ for n in range(0, args.nb_samples, args.batch_size):
         # Output parsed strings in classic sasquatch style
         if args.parsed_dir_classic:
             parsed_str = svrt.parse.parse_vignette_to_string_classic(
-                nb_shapes[k], shape_list[k], is_bordering[k], is_containing[k])
+                nb_shapes[k], shape_list[k], intershape_distance[k], is_containing[k])
             fname = os.path.join(args.parsed_dir_classic,
                                  subdir_fname[:-4] + '.txt')
             if not os.path.isdir(os.path.split(fname)[0]):
@@ -193,7 +193,7 @@ for n in range(0, args.nb_samples, args.batch_size):
         # Output parsed strings in updated style, with rotation and reflection
         if args.parsed_dir:
             parsed_str = svrt.parse.parse_vignette_to_string(
-                nb_shapes[k], shape_list[k], is_bordering[k], is_containing[k])
+                nb_shapes[k], shape_list[k], intershape_distance[k], is_containing[k])
             fname = os.path.join(args.parsed_dir,
                                  subdir_fname[:-4] + '.txt')
             if not os.path.isdir(os.path.split(fname)[0]):
