@@ -3,7 +3,7 @@
 ##---------------------------------------------------
 
 Makefile.depend
-svrt/*
+svrt/__init__.py
 example*.png
 
 
