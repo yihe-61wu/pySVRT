@@ -58,7 +58,7 @@ def parse_vignette_to_string_classic(
         for j in range(i, nb_shapes):
             if i == j:
                 continue
-            if is_bordering[i,j] > 0.5:
+            if is_bordering[i,j] > 0.75:
                 out += "borders(" + str(i) + ", " + str(j) + ")\n"
 
     return out
@@ -119,7 +119,7 @@ def parse_vignette_to_string(nb_shapes, shape_list, is_bordering,
         for j in range(i, nb_shapes):
             if i == j:
                 continue
-            if is_bordering[i,j] > 0.5:
+            if is_bordering[i,j] > 0.75:
                 out += "borders(" + str(i) + ", " + str(j) + ")\n"
 
     return out
