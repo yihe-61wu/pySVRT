@@ -70,6 +70,9 @@ int Shape::generate_part_part(scalar_t *xp, scalar_t *yp, int *nb_pixels,
 int Shape::generate_part_part2(scalar_t *xp, scalar_t *yp, int *nb_pixels,
                                scalar_t radius, scalar_t hole_radius,
                                scalar_t x1, scalar_t y1, scalar_t x2, scalar_t y2) {
+  // Generates a part of a shape, like generate_part_part, but constrains
+  // the shape to be within a square of width radius. There is no constraint
+  // on the centre (hole_radius is not used).
   if(abs(x1 - x2) > gap_max || abs(y1 - y2) > gap_max) {
 
     scalar_t d = sqrt(scalar_t(sq(x1 - x2) + sq(y1 - y2)))/5;
@@ -273,15 +276,21 @@ void Shape::generate_cross(scalar_t *xp, scalar_t *yp, int *nb_pixels,
   do {
     *nb_pixels = 0;
 
+    // Generate a horizontal stick, with x1 and x2 far from each other
+    // and y1 and y2 near 0
     x1 = (1 + random_uniform_0_1()) * radius / 2;
     y1 = (2 * random_uniform_0_1() - 1) * radius / 16;
 
     x2 = -(1 + random_uniform_0_1()) * radius / 2;
     y2 = (2 * random_uniform_0_1() - 1) * radius / 16;
 
+    // Next, find an intersection point somewhere in between x1 and x2, and
+    // not at the very end
     x3 = x2 + radius / 8 + random_uniform_0_1() * (x1 - x2 - radius / 4);
+    // Let x3 and x4 be a little away from the intersection point
     x4 = x3 + (2 * random_uniform_0_1() - 1) * radius / 16;
     x3 = x3 + (2 * random_uniform_0_1() - 1) * radius / 16;
+    // y3 and y4 are distant from each other again
     y3 = (1 + random_uniform_0_1()) * radius / 2;
     y4 = -(1 + random_uniform_0_1()) * radius / 2;
 
