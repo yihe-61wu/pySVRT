@@ -107,7 +107,7 @@ void Vignette::grow() {
 }
 
 void Vignette::extract_part(int part_id, int *output) {
-  for(int x; x < Vignette::width * Vignette::height; x++) {
+  for(int x = 0; x < Vignette::width * Vignette::height; x++) {
     output[x] = (part_presence[x] & (1 << part_id)) ? 0 : 255;
   }
 }
@@ -207,7 +207,7 @@ void Vignette::store_and_draw(
 }
 
 bool any_content_collides(int *content1, int *content2) {
-  for(int x; x < Vignette::width * Vignette::height; x++) {
+  for(int x = 0; x < Vignette::width * Vignette::height; x++) {
     if(content1[x] < 255 && content2[x] < 255) {
       return true;
     }
