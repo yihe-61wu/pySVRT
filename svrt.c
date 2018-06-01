@@ -102,8 +102,6 @@ THByteTensor *generate_vignettes_raw(
   long v, i, j;
   long *m, *l;
   unsigned char *a, *b;
-  int max_shapes = 8;
-  int nb_symbolic_outputs = 6;
 
   if(THLongTensor_nDimension(labels) != 1) {
     printf("Label tensor has to be of dimension 1.\n");
@@ -158,7 +156,7 @@ THByteTensor *generate_vignettes_raw(
 
 
   // alloc tensor
-  THFloatTensor_resize3d(shape_list, vs.nb_vignettes, max_shapes, nb_symbolic_outputs);
+  THFloatTensor_resize3d(shape_list, vs.nb_vignettes, vs.max_shapes, vs.nb_symbolic_outputs);
 
   st0 = THFloatTensor_stride(shape_list, 0);
   st1 = THFloatTensor_stride(shape_list, 1);
@@ -181,7 +179,7 @@ THByteTensor *generate_vignettes_raw(
   }
 
   // alloc tensor
-  THByteTensor_resize3d(intershape_distance, vs.nb_vignettes, max_shapes, max_shapes);
+  THByteTensor_resize3d(intershape_distance, vs.nb_vignettes, vs.max_shapes, vs.max_shapes);
 
   st0 = THByteTensor_stride(intershape_distance, 0);
   st1 = THByteTensor_stride(intershape_distance, 1);
@@ -204,7 +202,7 @@ THByteTensor *generate_vignettes_raw(
   }
 
   // alloc tensor
-  THFloatTensor_resize3d(is_containing, vs.nb_vignettes, max_shapes, max_shapes);
+  THFloatTensor_resize3d(is_containing, vs.nb_vignettes, vs.max_shapes, vs.max_shapes);
 
   st0 = THFloatTensor_stride(is_containing, 0);
   st1 = THFloatTensor_stride(is_containing, 1);
