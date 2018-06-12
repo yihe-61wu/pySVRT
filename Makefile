@@ -45,6 +45,6 @@ Makefile.depend: *.h *.cc Makefile
 	$(CC) $(CXXFLAGS) -M *.cc > Makefile.depend
 
 clean:
-	\rm -rf svrt *.o *.so Makefile.depend
+	\rm -rf *.o *.so svrt/*.so Makefile.depend
 
 -include Makefile.depend
