@@ -26,7 +26,7 @@ else
  CXXFLAGS = -fPIC -Wall -g -O3
 endif
 
-all: svrt TAGS
+all: svrt
 
 TAGS: *.cc *.h
 	etags *.cc *.h
