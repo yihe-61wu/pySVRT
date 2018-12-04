@@ -85,14 +85,28 @@ def randomize_shape_rotations(shape_list, nb_shapes):
     # are changed in the same manner.
     idx = shape_list[:, :, 2].type(torch.LongTensor)
 
+
     # Select the offsets based on shapeness index
     offsets = torch.gather(rot_offsets,
                            1,
                            idx * shape_is_present.type(torch.LongTensor))
     shape_list[:, :, 3] += offsets
 
+    # normalisation
+    shapeness_max = int(shape_list[:, :, 2].max().item() + 1)
+    for current_shapeness in range(shapeness_max):
+        mask_same_shapeness = (shape_list[:, :, 2] == current_shapeness).type(torch.FloatTensor)
+        rot_same_shapeness = torch.mul(shape_list[:, :, 3].type(torch.FloatTensor), mask_same_shapeness)
+        rot_max = torch.max(rot_same_shapeness, 1)
+        for current_vignette in range(n_vignette):
+            shape_list[current_vignette, :, 3] -= rot_max[0][current_vignette] * mask_same_shapeness[current_vignette, :]
+
+
+
+
     # Wrap to the interval [0, 2PI)
     shape_list[:, :, 3] %= 2 * math.pi
+
 
     return shape_list
 
@@ -123,6 +137,16 @@ def randomize_shape_reflections(shape_list, nb_shapes):
                            idx * shape_is_present.type(torch.LongTensor))
     shape_list[:, :, 5] += offsets
 
+    # normalisation
+    shapeness_max = int(shape_list[:, :, 2].max().item() + 1)
+    for current_shapeness in range(shapeness_max):
+        mask_same_shapeness = (shape_list[:, :, 2] == current_shapeness).type(torch.FloatTensor)
+        ref_same_shapeness = torch.mul(shape_list[:, :, 5].type(torch.FloatTensor), mask_same_shapeness)
+        ref_max = torch.max(ref_same_shapeness, 1)
+        for current_vignette in range(n_vignette):
+            shape_list[current_vignette, :, 5] -= ref_max[0][current_vignette] * mask_same_shapeness[current_vignette, :]
+
+
     # Wrap to the interval [0, 1)
     shape_list[:, :, 5] = torch.round(shape_list[:, :, 5])
     shape_list[:, :, 5] %= 2
@@ -135,4 +159,5 @@ def obfuscate_shape_construction(nb_shapes, shape_list, intershape_distance, is_
         nb_shapes, shape_list, intershape_distance, is_containing)
     shape_list = randomize_shape_rotations(shape_list, nb_shapes)
     shape_list = randomize_shape_reflections(shape_list, nb_shapes)
+
     return nb_shapes, shape_list, intershape_distance, is_containing
