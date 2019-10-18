@@ -196,7 +196,7 @@ void Vignette::store_and_draw(
   shapes_symb_output[offset + 1] = (float) yc;
   shapes_symb_output[offset + 2] = (float) shapeness;
   shapes_symb_output[offset + 3] = (float) rot;
-  shapes_symb_output[offset + 4] = (float) scale;
+  shapes_symb_output[offset + 4] = (float) scale * (is_mirrored * 2 - 1);
   shapes_symb_output[offset + 5] = (float) is_mirrored;
   // Store shape center location
   shapes_xs[nb_shapes] = xc;
